@@ -1,0 +1,54 @@
+# Kotlin/Java/Gradle
+/build/
+/out/
+/.gradle/
+/.idea/
+/*.iml
+/.mvn/
+!gradle/wrapper/gradle-wrapper.jar
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# Spring Boot specific
+/src/main/resources/application.yml
+/src/main/resources/application.properties
+/logs/
+/tmp/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# Node.js/Vite (Frontend)
+node_modules/
+dist/
+.vite/
+
+# Docker
+docker/data/
+docker/logs/
+docker-compose.override.yml
+
+# PostgreSQL
+pgdata/
+*.sql
+
+# OS-specific
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.swn
