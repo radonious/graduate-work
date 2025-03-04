@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class PlagApplication
 
 fun main(args: Array<String>) {
-	runApplication<PlagApplication>(*args)
+    runApplication<PlagApplication>(*args)
 }
