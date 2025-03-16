@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
+    restart: always
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: ${POSTGRES_TZ}
+
+  redis:
+    container_name: redis_container
+    image: redis:latest
+    restart: always
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+
+  spring-app:
+    container_name: app_container
+    image: plag:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${VITE_APP_PORT}:${VITE_APP_PORT}"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      # Appear earlier and overrides application.properties
+      SPRING_APPLICATION_NAME: ${APP_NAME}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}

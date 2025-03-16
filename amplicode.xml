@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AmplicodeDatabaseMigrationSettings">
+    <database-infos>
+      <database-info>
+        <option name="enabled" value="true" />
+        <dbms-id>postgres</dbms-id>
+      </database-info>
+    </database-infos>
+  </component>
+  <component name="AmplicodeJpaPluginProjectSettings">
+    <option name="lastSelectedLanguage" value="Kotlin" />
+  </component>
+  <component name="AmplicodePersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="edu.plag.main" name="Default">
+        <packages>
+          <package value="edu.plag" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="plag.main" name="Default">
+        <packages>
+          <package value="edu.plag" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>
