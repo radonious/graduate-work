@@ -1,6 +1,6 @@
 package edu.plag.config
 
-import edu.plag.util.FileStorageUtils
+import edu.plag.util.FileStorageProperties
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.Resource
@@ -13,11 +13,11 @@ import org.springframework.web.servlet.resource.ResourceResolverChain
 import java.util.Objects.nonNull
 
 @Configuration
-class WebConfig : WebMvcConfigurer {
+class WebConfig: WebMvcConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         this.serveDirectory(registry, "/", "classpath:/static/")
         registry.addResourceHandler("/images/**")
-            .addResourceLocations("file:" + FileStorageUtils.getUploadDir())
+            .addResourceLocations("file:" + FileStorageProperties.getUploadPath())
     }
 
     override fun configureMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {

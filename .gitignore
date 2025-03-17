@@ -1,4 +1,14 @@
-# Kotlin/Java/Gradle
+## Java / Kotlin
+.mtj.tmp/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+src/main/resources/static/
+ui/dist/
 /build/
 /out/
 /.gradle/
@@ -19,6 +29,100 @@ out/
 /src/main/resources/application.properties
 /logs/
 /tmp/
+
+## Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+## Gradle
+bin/
+build/
+.gradle
+.gradletasknamecache
+gradle-app.setting
+!gradle-wrapper.jar
+
+## IntelliJ
+out/
+.idea/
+.idea_modules/
+*.iml
+*.ipr
+*.iws
+
+## Eclipse
+.settings/
+tmp/
+.metadata
+.classpath
+.project
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.factorypath
+
+## NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+## Visual Studio Code
+.vscode/
+.code-workspace
+
+## OS X
+.DS_Store
+
+## Miscellaneous
+*.log
+
+## Other
+*.txt
+uploads/
+.env
+# Logs
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+coverage
+*.local
+
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+*.tsbuildinfo
 
 ### STS ###
 .apt_generated
@@ -41,17 +145,6 @@ dist/
 docker/data/
 docker/logs/
 docker-compose.override.yml
-
-# PostgreSQL
-pgdata/
-*.sql
-
-# OS-specific
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-*.swn
 
 #Frontend
 # Logs

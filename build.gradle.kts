@@ -28,7 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.4.3")
     // implementation("org.springframework.boot:spring-boot-starter-security:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-web:3.4.3")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
+//    implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
 
     // Test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.25")
@@ -50,7 +50,10 @@ dependencies {
     implementation("org.mapstruct:mapstruct:1.6.3")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
     implementation("org.apache.poi:poi-ooxml:5.3.0")
-    implementation("org.apache.tika:tika-core:2.9.1")
+    implementation("org.apache.tika:tika-core:2.9.2")
+
+    // Files upload
+    implementation("commons-io:commons-io:2.17.0")
 
     // Analysis
     implementation("com.github.javaparser:javaparser-core:3.26.3")
@@ -164,5 +167,5 @@ tasks.register("copyToResources") {
     }
 }
 
-tasks.findByName("bootRun")?.dependsOn("buildUI")
+tasks.findByName("bootRun")?.dependsOn("buildUI") // Нужна запущенная бд
 tasks.findByName("bootBuildImage")?.dependsOn("buildUI")
