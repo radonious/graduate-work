@@ -1,6 +1,6 @@
 package edu.plag.analysis.analyzer
 
-import edu.plag.analysis.parser.TokenParser
+import edu.plag.analysis.parser.parseTokens
 import edu.plag.util.CodeSnippets
 import kotlin.math.*
 
@@ -125,11 +125,10 @@ class TokenAnalyzer {
 }
 
 fun main2() {
-    val parser = TokenParser()
 
-    val tokens1 = parser.parseCode(CodeSnippets.shortCode())
-    val tokens2 = parser.parseCode(CodeSnippets.shortCodeBitChanged())
-    val tokens3 = parser.parseCode(CodeSnippets.longCode())
+    val tokens1 = parseTokens(CodeSnippets.shortCode())
+    val tokens2 = parseTokens(CodeSnippets.shortCodeBitChanged())
+    val tokens3 = parseTokens(CodeSnippets.longCode())
 
     val tokenAnalyzer = TokenAnalyzer()
 

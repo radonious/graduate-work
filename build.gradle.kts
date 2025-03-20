@@ -56,10 +56,12 @@ dependencies {
     implementation("commons-io:commons-io:2.17.0")
 
     // Analysis
-    implementation("com.github.javaparser:javaparser-core:3.26.3")
-    implementation("org.antlr:antlr4-runtime:4.13.1")
     antlr("org.antlr:antlr4:4.13.1")
-    implementation("org.soot-oss:soot:4.6.0")
+    implementation("org.antlr:antlr4-runtime:4.13.1")
+    implementation("com.github.javaparser:javaparser-core:3.26.3")
+    implementation("org.jgrapht:jgrapht-core:1.5.2")
+    implementation("org.jgrapht:jgrapht-io:1.5.2")
+    implementation("org.jgrapht:jgrapht-opt:1.5.2")
 }
 
 kotlin {
