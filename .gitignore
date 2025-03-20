@@ -25,8 +25,7 @@ out/
 !**/src/test/**/out/
 
 # Spring Boot specific
-/src/main/resources/application.yml
-/src/main/resources/application.properties
+src/main/resources/static/
 /logs/
 /tmp/
 
