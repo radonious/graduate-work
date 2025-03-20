@@ -167,5 +167,5 @@ tasks.register("copyToResources") {
     }
 }
 
-tasks.findByName("bootRun")?.dependsOn("buildUI") // Нужна запущенная бд
-tasks.findByName("bootBuildImage")?.dependsOn("buildUI")
+//tasks.findByName("bootRun")?.dependsOn("buildUI")
+//tasks.findByName("bootBuildImage")?.dependsOn("buildUI")
