@@ -122,7 +122,7 @@ fun tokensAnalyzeFinalScore(tokens1: List<String>, tokens2: List<String>, k: Int
     return baseScore
 }
 
-fun main() {
+fun main2() {
     val tokens1 = parseTokens(CodeSnippets.canonicalBSearch())
     val tokens2 = parseTokens(CodeSnippets.renameBSearch())
     val tokens3 = parseTokens(CodeSnippets.trashBSearch())
