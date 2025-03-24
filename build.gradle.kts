@@ -28,7 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.4.3")
     // implementation("org.springframework.boot:spring-boot-starter-security:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-web:3.4.3")
-//    implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
+    // implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
 
     // Test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.25")
