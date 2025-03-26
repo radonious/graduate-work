@@ -7,6 +7,19 @@ class CodeSnippets {
                 public static void main(String[] args) {
                     int x = 10.0;
                     String text = "Hello, World!";
+                    String text = "Hello, World!";
+                    String text = "Hello, World!";
+                    String text = "Hello, World!";
+                    System.out.println(text);
+                }
+            }
+        """.trimIndent()
+
+        fun shortCodeChanged() = """
+            public class Test {
+                public static void main(String[] args) {
+                    String text = "Hello, World!";
+                    String text = "Hello, World!";
                     System.out.println(text);
                 }
             }
