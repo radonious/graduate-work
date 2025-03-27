@@ -220,15 +220,9 @@ class AstAnalyzer {
         return false
     }
 
-
-
-
-
-    // TODO: Сделать нормальное edit distance сравнение
-    fun editDistanceSimilarity(graph1: Graph<String, DefaultEdge>, graph2: Graph<String, DefaultEdge>): Double {
+    fun editDistanceSiilarity(graph1: Graph<String, DefaultEdge>, graph2: Graph<String, DefaultEdge>): Double {
         val ged = calculateEditDistance(graph1, graph2)
         val maxGed = calculateMaxPossibleDistance(graph1, graph2)
-        println("GED: $ged MAX: $maxGed")
         return if (maxGed == 0.0) 1.0 else 1.0 - (ged / maxGed)
     }
 
@@ -296,11 +290,164 @@ class AstAnalyzer {
         val maxEdges = max(graph1.edgeSet().size, graph2.edgeSet().size)
         return maxNodes * 1.0 + maxEdges * 0.25
     }
+
+
+    // Работает хуже
+    class ASTEditDistanceCalculator(
+        private val vertexCost: Double = 1.0,
+        private val edgeCost: Double = 0.2
+    ) {
+        fun computeDistance(
+            graph1: DefaultDirectedGraph<String, DefaultEdge>,
+            graph2: DefaultDirectedGraph<String, DefaultEdge>
+        ): Double {
+            val root1 = findRoot(graph1)
+            val root2 = findRoot(graph2)
+
+            val editDistance = computeTreeEditDistance(root1, root2, graph1, graph2)
+
+            val maxNodes = max(graph1.vertexSet().size, graph2.vertexSet().size).toDouble()
+            val maxEdges = max(graph1.edgeSet().size, graph2.edgeSet().size).toDouble()
+
+            val maxPossibleEdits = maxNodes * vertexCost + maxEdges * edgeCost
+            return 1.0 - (editDistance / maxPossibleEdits)
+
+        }
+
+        private fun findRoot(graph: Graph<String, DefaultEdge>): String? {
+            return graph.vertexSet().find { graph.inDegreeOf(it) == 0 }
+        }
+
+        private fun computeTreeEditDistance(
+            node1: String?,
+            node2: String?,
+            graph1: DefaultDirectedGraph<String, DefaultEdge>,
+            graph2: DefaultDirectedGraph<String, DefaultEdge>
+        ): Double {
+            return when {
+                node1 == null && node2 == null -> 0.0
+                node1 == null -> insertCost(node2!!, graph2)
+                node2 == null -> deleteCost(node1, graph1)
+                else -> {
+                    val labelCost = if (node1 != node2) vertexCost else 0.0
+                    val childrenCost = computeChildrenEditDistance(
+                        getOrderedChildren(node1, graph1),
+                        getOrderedChildren(node2, graph2),
+                        graph1,
+                        graph2
+                    )
+                    labelCost + childrenCost
+                }
+            }
+        }
+
+        private fun insertCost(node: String, graph: DefaultDirectedGraph<String, DefaultEdge>): Double {
+            var cost = vertexCost
+            getOrderedChildren(node, graph).forEach { child ->
+                cost += insertCost(child, graph) + edgeCost
+            }
+            return cost
+        }
+
+        private fun deleteCost(node: String, graph: DefaultDirectedGraph<String, DefaultEdge>): Double {
+            var cost = vertexCost
+            getOrderedChildren(node, graph).forEach { child ->
+                cost += deleteCost(child, graph) + edgeCost
+            }
+            return cost
+        }
+
+        private fun getOrderedChildren(
+            node: String,
+            graph: DefaultDirectedGraph<String, DefaultEdge>
+        ): List<String> {
+            return graph.outgoingEdgesOf(node).map { graph.getEdgeTarget(it) }
+        }
+
+        private fun computeChildrenEditDistance(
+            children1: List<String>,
+            children2: List<String>,
+            graph1: DefaultDirectedGraph<String, DefaultEdge>,
+            graph2: DefaultDirectedGraph<String, DefaultEdge>
+        ): Double {
+            val m = children1.size
+            val n = children2.size
+            val dp = Array(m + 1) { DoubleArray(n + 1) }
+
+            for (i in 0..m) {
+                for (j in 0..n) {
+                    dp[i][j] = when {
+                        i == 0 && j == 0 -> 0.0
+                        i == 0 -> dp[0][j - 1] + insertCost(children2[j - 1], graph2)
+                        j == 0 -> dp[i - 1][0] + deleteCost(children1[i - 1], graph1)
+                        else -> minOf(
+                            dp[i - 1][j] + deleteCost(children1[i - 1], graph1),
+                            dp[i][j - 1] + insertCost(children2[j - 1], graph2),
+                            dp[i - 1][j - 1] + computeTreeEditDistance(
+                                children1[i - 1],
+                                children2[j - 1],
+                                graph1,
+                                graph2
+                            ) + edgeCost
+                        )
+                    }
+                }
+            }
+            return dp[m][n]
+        }
+    }
+
+    // Работает лучше
+    class GraphEditDistanceCalculator(
+        private val vertexCost: Double = 1.0,
+        private val edgeCost: Double = 0.2,
+    ) {
+        fun computeSimilarity(
+            graph1: DefaultDirectedGraph<String, DefaultEdge>,
+            graph2: DefaultDirectedGraph<String, DefaultEdge>
+        ): Double {
+            val editDistance = computeEditDistance(graph1, graph2)
+
+            val maxVertexes = max(graph1.vertexSet().size, graph2.vertexSet().size).toDouble()
+            val maxEdges = max(graph1.edgeSet().size, graph2.edgeSet().size).toDouble()
+
+            val maxPossibleEdits = maxVertexes * vertexCost + maxEdges * edgeCost
+            val result = max(1.0 - (editDistance / maxPossibleEdits), 0.0)
+            return min(result, 1.0)
+        }
+
+        private fun computeEditDistance(
+            graph1: DefaultDirectedGraph<String, DefaultEdge>,
+            graph2: DefaultDirectedGraph<String, DefaultEdge>
+        ): Double {
+            val vertices1 = graph1.vertexSet()
+            val vertices2 = graph2.vertexSet()
+
+            // 1. Подсчёт разницы по вершинам
+            val unmatchedVertices = vertices1.symmetricDifference(vertices2)
+            val vertexEditCost = unmatchedVertices.size * vertexCost
+
+            // 2. Подсчёт разницы по рёбрам
+            val edgePairs1 = graph1.edgeSet().map { e -> graph1.getEdgeSource(e) to graph1.getEdgeTarget(e) }.toSet()
+            val edgePairs2 = graph2.edgeSet().map { e -> graph2.getEdgeSource(e) to graph2.getEdgeTarget(e) }.toSet()
+
+            val unmatchedEdges = edgePairs1.symmetricDifference(edgePairs2)
+            val edgeEditCost = unmatchedEdges.size * edgeCost
+
+            return vertexEditCost + edgeEditCost
+        }
+
+        private fun <T> Set<T>.symmetricDifference(other: Set<T>): Set<T> {
+            return (this union other) - (this intersect other)
+        }
+    }
+
 }
 
-fun main33() {
-    val userCode = CodeSnippets.renameBSearch()
-    val dbCode = CodeSnippets.trashBSearch()
+fun main333() {
+    // Код сервиса
+    val userCode = CodeSnippets.longCode()
+    val dbCode = CodeSnippets.canonicalBSearch()
 
     val parser = AstParser()
     val analyzer = AstAnalyzer()
@@ -313,18 +460,17 @@ fun main33() {
 
     val plag = analyzer.hasAstPlagiarism(graph1, graph2, 9)
 
-
     println("Found plag: $plag")
 
     println("\nUsers")
     println("Vertices: ${graph1.vertexSet()}")
     println("Edges: ${graph1.edgeSet()}\n")
-    println("GRAPH-VIZ")
 
     println("\nDB")
     println("Vertices: ${graph2.vertexSet()}")
     println("Edges: ${graph2.edgeSet()}\n")
-    println("GRAPH-VIZ")
 
-    println(analyzer.editDistanceSimilarity(graph1, graph2))
+    println(AstAnalyzer.ASTEditDistanceCalculator().computeDistance(graph1, graph2))
+    println(AstAnalyzer.GraphEditDistanceCalculator().computeSimilarity(graph1, graph2)) // BEST
+    println(AstAnalyzer().editDistanceSiilarity(graph1, graph2))
 }

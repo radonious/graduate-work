@@ -26,8 +26,6 @@ class CodeSnippets {
         """.trimIndent()
 
         fun longCode() = """
-            import java.util.*;
-
             public class StudentManagement {
                 static class Student {
                     String name;
@@ -51,6 +49,35 @@ class CodeSnippets {
             
                     for (Student s : students) {
                         System.out.println(s.name + " - " + s.gpa);
+                    }
+                }
+            }
+        """.trimIndent()
+
+        fun longCodeRenamed() = """
+            public class Schoolmate {
+                static class Schoolmate {
+                    String alias;
+                    int old;
+                    double score;
+            
+                    Schoolmate(String alias, int old, double score) {
+                        this.alias = alias;
+                        this.old = old;
+                        this.score = score;
+                    }
+                }
+            
+                public static void main(String[] args) {
+                    List<Schoolmate> students = new ArrayList<>();
+                    students.add(new Schoolmate("Alice", 20, 3.8));
+                    students.add(new Schoolmate("Bob", 21, 3.2));
+                    students.add(new Schoolmate("Charlie", 22, 3.5));
+            
+                    students.sort(Comparator.comparingDouble(s -> -s.score));
+            
+                    for (Schoolmate s : students) {
+                        System.out.println(s.alias + " - " + s.score);
                     }
                 }
             }
