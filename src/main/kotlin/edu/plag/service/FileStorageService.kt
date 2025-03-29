@@ -37,7 +37,7 @@ class FileStorageService {
     fun saveArchive(file: MultipartFile): String {
         val originalFilename = file.originalFilename ?: throw IllegalArgumentException("Файл не имеет имени")
 
-        val archivePath =  FileStorageProperties.getUploadPath().resolve(originalFilename)
+        val archivePath = FileStorageProperties.getUploadPath().resolve(originalFilename)
         file.transferTo(archivePath.toFile()) // Сохранение архива
 
         val archiveName = archivePath.fileName.toString().replace(".zip", "")
@@ -49,9 +49,9 @@ class FileStorageService {
         FileStorageProperties.unzip(archivePath.toFile(), extractDir.toFile()) // Распаковываем архив
 
         var countJavaFiles = 0
-        extractDir.toFile().walk().forEach { file ->
-            if (file.isFile && !file.extension.equals("java", ignoreCase = true)) {
-                file.delete() // Удаляем файлы, которые не .java
+        extractDir.toFile().walk().forEach {
+            if (it.isFile && !it.extension.equals("java", ignoreCase = true)) {
+                it.delete() // Удаляем файлы, которые не .java
                 ++countJavaFiles
             }
         }

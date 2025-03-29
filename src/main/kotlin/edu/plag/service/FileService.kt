@@ -2,8 +2,8 @@ package edu.plag.service
 
 import edu.plag.entity.File
 import edu.plag.repository.FileRepository
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FileService(

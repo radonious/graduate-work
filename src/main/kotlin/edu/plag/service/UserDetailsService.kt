@@ -12,14 +12,14 @@ import org.springframework.security.core.userdetails.UserDetailsService as UserD
 
 
 @Service
-data class UserDetailsService(
+class UserDetailsService(
     val userRepository: UserRepository,
 ) : UserDetailsServiceInterface {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     override fun loadUserByUsername(username: String): UserDetails {
         val user: User = userRepository.findByUsername(username)
-            ?: throw UsernameNotFoundException("User not found with username: $username")
+            .orElseThrow { UsernameNotFoundException("User not found with username: $username") }
 
         return org.springframework.security.core.userdetails.User(
             user.username,

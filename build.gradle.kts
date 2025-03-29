@@ -1,9 +1,13 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
+    kotlin("kapt") version "1.9.25"
+    kotlin("plugin.jpa") version "1.9.25"
+
     id("org.springframework.boot") version "3.4.3"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("plugin.jpa") version "1.9.25"
     id("antlr")
 }
 
@@ -16,6 +20,12 @@ java {
     }
 }
 
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -23,11 +33,11 @@ repositories {
 dependencies {
     // Starters
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.4.3")
-    // implementation("org.springframework.boot:spring-boot-starter-data-rest:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-security:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-web:3.4.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+    // implementation("org.springframework.boot:spring-boot-starter-data-rest:3.4.3")
     // implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
 
     // Test
@@ -49,9 +59,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.25")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
     implementation("org.mapstruct:mapstruct:1.6.3")
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+    kapt("org.mapstruct:mapstruct-processor:1.6.3")
     implementation("org.apache.poi:poi-ooxml:5.3.0")
     implementation("org.apache.tika:tika-core:2.9.2")
+
+    // Log
+    // implementation("org.slf4j:slf4j-api:2.0.17")
+    // testImplementation("org.slf4j:slf4j-simple:2.0.17")
 
     // Files upload
     implementation("commons-io:commons-io:2.17.0")
@@ -85,8 +99,12 @@ tasks.generateGrammarSource {
     arguments = listOf("-visitor", "-no-listener")
 }
 
-tasks.named("compileKotlin") {
-    dependsOn("generateGrammarSource")
+tasks.withType<KotlinCompile>().configureEach {
+    dependsOn(tasks.withType<AntlrTask>())
+}
+
+tasks.withType<Jar>().configureEach {
+    dependsOn(tasks.withType<AntlrTask>())
 }
 
 sourceSets {

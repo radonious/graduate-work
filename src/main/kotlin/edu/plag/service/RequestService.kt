@@ -2,8 +2,8 @@ package edu.plag.service
 
 import edu.plag.entity.Request
 import edu.plag.repository.RequestRepository
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 
 @Service

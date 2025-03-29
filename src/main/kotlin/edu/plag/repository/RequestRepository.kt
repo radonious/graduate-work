@@ -1,4 +1,4 @@
-package edu.plag.repository;
+package edu.plag.repository
 
 import edu.plag.entity.Request
 import org.springframework.data.jpa.repository.JpaRepository

@@ -27,14 +27,12 @@ data class SecurityConfig(
 ) {
     companion object {
         private val PUBLIC_PATHS = arrayOf(
-            "/api/v1/auth/**"
+            "/api/v1/**",
+            "/api/v1/auth/**",
         )
 
         private val SECURED_PATHS = arrayOf(
             "/api/v1/users/**",
-            "/api/v1/forms/**",
-            "/api/v1/completions/**",
-            "/api/v1/statistic/**"
         )
     }
 

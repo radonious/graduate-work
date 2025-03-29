@@ -1,7 +1,6 @@
 package edu.plag.entity
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
 
 @Entity
 @Table(name = "files")

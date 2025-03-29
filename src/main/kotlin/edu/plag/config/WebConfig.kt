@@ -14,6 +14,7 @@ import java.util.Objects.nonNull
 
 @Configuration
 class WebConfig : WebMvcConfigurer {
+
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         this.serveDirectory(registry, "/", "classpath:/static/")
         registry.addResourceHandler("/images/**")

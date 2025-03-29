@@ -11,7 +11,11 @@ import java.util.zip.ZipFile
 class FileStorageProperties {
 
     companion object {
-         fun unzip(zipFile: File, destDir: File) {
+        fun getUploadPath(): Path = Paths.get("uploads").toAbsolutePath().normalize().also {
+            Files.createDirectories(it)
+        }
+
+        fun unzip(zipFile: File, destDir: File) {
             ZipFile(zipFile).use { zip ->
                 zip.entries().asSequence().forEach { entry ->
                     val file = File(destDir, entry.name)
@@ -27,10 +31,6 @@ class FileStorageProperties {
                     }
                 }
             }
-        }
-
-        fun getUploadPath(): Path = Paths.get("uploads").toAbsolutePath().normalize().also {
-            Files.createDirectories(it)
         }
     }
 }

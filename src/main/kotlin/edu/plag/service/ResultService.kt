@@ -1,9 +1,9 @@
 package edu.plag.service
 
-import edu.plag.repository.ResultRepository
 import edu.plag.entity.Result
-import org.springframework.transaction.annotation.Transactional
+import edu.plag.repository.ResultRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ResultService(private val resultRepository: ResultRepository) {

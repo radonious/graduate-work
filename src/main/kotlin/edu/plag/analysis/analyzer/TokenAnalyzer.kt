@@ -2,7 +2,8 @@ package edu.plag.analysis.analyzer
 
 import edu.plag.analysis.parser.TokenParser
 import edu.plag.util.CodeSnippets
-import kotlin.math.*
+import kotlin.math.max
+import kotlin.math.min
 
 class TokenAnalyzer {
     /**
