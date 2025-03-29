@@ -8,6 +8,9 @@ import java.io.StringReader
 
 class TokenParser {
 
+    /**
+     * Парсит Java-код и разделяет на отдельные токены
+     */
     fun parseTokens(sourceCode: String): List<String> {
         val lexer = JavaLexer(CharStreams.fromReader(StringReader(sourceCode)))
         val tokens = CommonTokenStream(lexer)
@@ -18,6 +21,10 @@ class TokenParser {
             .map { normalizeToken(it) }
     }
 
+    // TODO: подумать что еще заменять
+    /**
+     * Нормализует вид токена
+     */
     private fun normalizeToken(token: Token): String {
         return when (token.type) {
             JavaLexer.LINE_COMMENT, JavaLexer.COMMENT -> "" // Убираем комментарии

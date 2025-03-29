@@ -444,8 +444,9 @@ class AstAnalyzer {
 
 }
 
-fun main333() {
-    // Код сервиса
+// TODO: убрать после создания сервиса
+fun main33() {
+    // Предположительный код сервиса
     val userCode = CodeSnippets.longCode()
     val dbCode = CodeSnippets.canonicalBSearch()
 

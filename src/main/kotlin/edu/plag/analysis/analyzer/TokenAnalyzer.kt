@@ -124,7 +124,9 @@ class TokenAnalyzer {
     }
 }
 
+// TODO: убрать после создания сервиса
 fun main22() {
+    // Предположительный код сервиса
     val tp = TokenParser()
     val ta = TokenAnalyzer()
 

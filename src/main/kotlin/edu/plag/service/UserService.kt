@@ -2,13 +2,19 @@ package edu.plag.service;
 
 import edu.plag.entity.User
 import edu.plag.repository.UserRepository
-import jakarta.transaction.Transactional
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+
 
 @Service
-class UserService(
-    private val userRepository: UserRepository
+data class UserService(
+    private val userRepository: UserRepository,
+    private val  passwordEncoder: PasswordEncoder,
+    // private val  userMapper: UserMapper,
 ) {
+
+    // TODO: найти мапперы для котлина и сделать мапперы
 
     fun getAllUsers(): List<User> = userRepository.findAll()
 

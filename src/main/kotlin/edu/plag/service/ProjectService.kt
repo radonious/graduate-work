@@ -2,7 +2,7 @@ package edu.plag.service
 
 import edu.plag.entity.Project
 import edu.plag.repository.ProjectRepository
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
 
 @Service

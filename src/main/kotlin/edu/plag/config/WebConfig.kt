@@ -13,7 +13,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain
 import java.util.Objects.nonNull
 
 @Configuration
-class WebConfig: WebMvcConfigurer {
+class WebConfig : WebMvcConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         this.serveDirectory(registry, "/", "classpath:/static/")
         registry.addResourceHandler("/images/**")
@@ -40,7 +40,10 @@ class WebConfig: WebMvcConfigurer {
 
         // Применяем паттерн
         registry.addResourceHandler(*endpointPatterns)
-            .addResourceLocations(if (location.endsWith("/")) location else "$location/").resourceChain(false)
+            .addResourceLocations(
+                if (location.endsWith("/")) location
+                else "$location/"
+            ).resourceChain(false)
             .addResolver(object : PathResourceResolver() {
                 // Если запрашиваемый ресурс валидный - возвращаем его
                 // В иных случаях перенаправляем на /index.html

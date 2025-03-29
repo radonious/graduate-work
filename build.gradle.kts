@@ -22,17 +22,18 @@ repositories {
 
 dependencies {
     // Starters
-    testImplementation("org.springframework.boot:spring-boot-starter-test:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.4.3")
-    implementation("org.springframework.boot:spring-boot-starter-data-rest:3.4.3")
+    // implementation("org.springframework.boot:spring-boot-starter-data-rest:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.4.3")
-    // implementation("org.springframework.boot:spring-boot-starter-security:3.4.3")
+    implementation("org.springframework.boot:spring-boot-starter-security:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-web:3.4.3")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
     // implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
 
     // Test
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.4.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.25")
-    // testImplementation("org.springframework.security:spring-security-test:6.4.3")
+    testImplementation("org.springframework.security:spring-security-test:6.4.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.1")
 
     // Database
