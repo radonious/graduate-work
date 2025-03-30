@@ -36,20 +36,27 @@ data class JwtRequestFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        val username: String?
         val authorizationHeader = request.getHeader("Authorization")
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             val jwt = authorizationHeader.substring(7)
-            val username = jwtService.extractUsername(jwt)
+            try {
+                username = jwtService.extractUsername(jwt)
+            } catch (ex: Exception) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT Token. No username")
+                return
+            }
 
             if (SecurityContextHolder.getContext().authentication == null) {
                 val userDetails = userDetailsService.loadUserByUsername(username)
+
                 if (jwtService.validateToken(jwt, userDetails)) {
                     val usernamePasswordAuthenticationToken =
                         UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
                     SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT Token")
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT Token. Cant validate")
                     return
                 }
             }

@@ -444,7 +444,7 @@ class AstAnalyzer {
 
 }
 
-// TODO: убрать после создания сервиса
+// TODO: убрать после создания сервиса 2
 fun main33() {
     // Предположительный код сервиса
     val userCode = CodeSnippets.longCode()

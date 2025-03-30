@@ -3,7 +3,6 @@ package edu.plag.service
 import edu.plag.dto.UserRequest
 import edu.plag.dto.UserResponse
 import edu.plag.entity.User
-import edu.plag.enums.UserRole
 import edu.plag.mapper.UserMapper
 import edu.plag.repository.UserRepository
 import jakarta.persistence.EntityExistsException
@@ -55,12 +54,12 @@ class UserService(
     }
 
     /** Создание нового пользователя
-     * @param [UserRequest] запрос
+     * @param [userRequest] запрос
      * @return [UserResponse] ответ
      */
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     fun createUser(userRequest: UserRequest): UserResponse {
-        val user: User = userMapper.toEntity(userRequest.copy(role = UserRole.USER))
+        val user: User = userMapper.toEntity(userRequest)
         if (userRepository.existsByUsername(user.username)) {
             throw EntityExistsException("Username '${user.username}' already exists")
         }
@@ -80,7 +79,8 @@ class UserService(
         if (!userRepository.existsById(id)) {
             throw EntityNotFoundException("User not found with id: $id")
         }
-        val updatedUser: User = userMapper.toEntity(userRequest).copy(id = id)
+        val passwordCoded = passwordEncoder.encode(userRequest.password)
+        val updatedUser: User = userMapper.toEntity(userRequest).copy(id = id, password = passwordCoded)
         val savedUser = userRepository.save(updatedUser)
         return userMapper.toDto(savedUser)
     }

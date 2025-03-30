@@ -1,5 +1,7 @@
-package edu.plag.security
+package edu.plag.config
 
+import edu.plag.security.JwtAuthenticationEntryPoint
+import edu.plag.security.JwtRequestFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -17,7 +19,6 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -27,12 +28,12 @@ data class SecurityConfig(
 ) {
     companion object {
         private val PUBLIC_PATHS = arrayOf(
-            "/api/v1/**",
             "/api/v1/auth/**",
         )
 
         private val SECURED_PATHS = arrayOf(
             "/api/v1/users/**",
+            "/api/v1/upload/**",
         )
     }
 
@@ -42,29 +43,22 @@ data class SecurityConfig(
     }
 
     @Bean
-    @Throws(Exception::class)
     fun publicFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http.securityMatcher(*PUBLIC_PATHS)
-            .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
-            .cors { cors: CorsConfigurer<HttpSecurity> -> cors.configurationSource(corsConfigurationSource()) }
+        http.securityMatcher(*PUBLIC_PATHS).csrf { it.disable() }
+            .cors { it.configurationSource(corsConfigurationSource()) }
             .authorizeHttpRequests { request -> request.anyRequest().permitAll() }
         return http.build()
     }
 
     @Bean
-    @Throws(Exception::class)
     fun securedFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http.securityMatcher(*SECURED_PATHS)
-            .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
-            .cors { cors: CorsConfigurer<HttpSecurity> -> cors.configurationSource(corsConfigurationSource()) }
-            .authorizeHttpRequests { request -> request.anyRequest().authenticated() }
-            .exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity> ->
-                exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            }
-            .sessionManagement { sessionManagement: SessionManagementConfigurer<HttpSecurity> ->
-                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
+        http.securityMatcher(*SECURED_PATHS).csrf { it.disable() }
+            .cors { it.configurationSource(corsConfigurationSource()) }
+            .authorizeHttpRequests { request -> request.anyRequest().authenticated() }.exceptionHandling {
+                it.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            }.sessionManagement {
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 

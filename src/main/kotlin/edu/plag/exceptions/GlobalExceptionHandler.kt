@@ -53,6 +53,6 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidFileTypeException::class)
     fun handleInvalidFileTypeException(ex: InvalidFileTypeException): ResponseEntity<String> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
+        return ResponseEntity(ex.message, HttpStatus.BAD_REQUEST)
     }
 }

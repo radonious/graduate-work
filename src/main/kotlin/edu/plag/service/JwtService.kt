@@ -88,6 +88,6 @@ class JwtService {
     companion object {
         private const val TOKEN_DEFAULT_HOURS_LENGTH = 10
         private const val MS_PER_HOUR = 1000 * 60 * 60
-        val SECRET_KEY: SecretKey = Jwts.SIG.HS256.key().build()
+        private val SECRET_KEY: SecretKey = Jwts.SIG.HS256.key().build()
     }
 }

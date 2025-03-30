@@ -6,11 +6,12 @@ import edu.plag.service.TokenService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -41,7 +42,6 @@ class AuthController(
         return ResponseEntity.ok(refreshTokenResponse)
     }
 
-    // TODO: добавить проверку на выход не из своего аккаунта
     @Operation(summary = "Logout user")
     @PostMapping(value = ["/logout"], consumes = ["application/json"])
     fun logoutUser(@RequestBody logoutRequest: LogoutRequest): ResponseEntity<String> {
