@@ -36,6 +36,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-security:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-web:3.4.3")
+    implementation("org.springframework.boot:spring-boot-starter-validation:3.4.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
     // implementation("org.springframework.boot:spring-boot-starter-data-rest:3.4.3")
     // implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
@@ -113,80 +114,80 @@ sourceSets {
     }
 }
 
-tasks.register("buildUI") {
-    group = "custom"
-    description = "Build UI and copy into static resources"
-
-    val distFolder by extra { file("ui/dist") }
-    val uiFolder by extra { file("ui") }
-    val env = file(".env")
-
-    doLast {
-        if (!env.exists()) {
-            throw GradleException("No .env in root folder")
-        } else if (!uiFolder.exists()) {
-            throw GradleException("No ui/ in root folder")
-        }
-
-        if (distFolder.exists()) {
-            println("[GRADLE TASKS] - ui/dist folder exist. Deleting...")
-            delete(distFolder)
-        }
-
-        exec {
-            workingDir = uiFolder
-            commandLine("npm", "install")
-        }
-
-        exec {
-            workingDir = uiFolder
-            commandLine("npm", "fund")
-        }
-
-        exec {
-            workingDir = uiFolder
-            commandLine("npm", "run", "build")
-        }
-
-        if (!distFolder.exists()) {
-            throw GradleException("Folder 'ui/dist' did not created. UI build problem.")
-        }
-
-        println("[GRADLE TASKS] - UI built successfully.")
-    }
-
-
-    finalizedBy("copyToResources")
-}
-
-
-tasks.register("copyToResources") {
-    group = "custom"
-    description = "Copy data"
-
-    dependsOn("buildUI")
-
-    doLast {
-        val uiDist = file("ui/dist")
-        val resourcesStatic = file("src/main/resources/static")
-
-        if (!resourcesStatic.exists()) {
-            println("[GRADLE TASKS] - resources/static folder does not exist. Creating...")
-            resourcesStatic.mkdirs()
-        } else {
-            println("[GRADLE TASKS] - resources/static folder exist. Clearing...")
-            delete(resourcesStatic)
-            resourcesStatic.mkdirs()
-        }
-
-        project.copy {
-            from(uiDist)
-            into(resourcesStatic)
-        }
-
-        println("[GRADLE TASKS] - UI dist copied successfully.")
-    }
-}
+//tasks.register("buildUI") {
+//    group = "custom"
+//    description = "Build UI and copy into static resources"
+//
+//    val distFolder by extra { file("ui/dist") }
+//    val uiFolder by extra { file("ui") }
+//    val env = file(".env")
+//
+//    doLast {
+//        if (!env.exists()) {
+//            throw GradleException("No .env in root folder")
+//        } else if (!uiFolder.exists()) {
+//            throw GradleException("No ui/ in root folder")
+//        }
+//
+//        if (distFolder.exists()) {
+//            println("[GRADLE TASKS] - ui/dist folder exist. Deleting...")
+//            delete(distFolder)
+//        }
+//
+//        exec {
+//            workingDir = uiFolder
+//            commandLine("npm", "install")
+//        }
+//
+//        exec {
+//            workingDir = uiFolder
+//            commandLine("npm", "fund")
+//        }
+//
+//        exec {
+//            workingDir = uiFolder
+//            commandLine("npm", "run", "build")
+//        }
+//
+//        if (!distFolder.exists()) {
+//            throw GradleException("Folder 'ui/dist' did not created. UI build problem.")
+//        }
+//
+//        println("[GRADLE TASKS] - UI built successfully.")
+//    }
+//
+//
+//    finalizedBy("copyToResources")
+//}
+//
+//
+//tasks.register("copyToResources") {
+//    group = "custom"
+//    description = "Copy data"
+//
+//    dependsOn("buildUI")
+//
+//    doLast {
+//        val uiDist = file("ui/dist")
+//        val resourcesStatic = file("src/main/resources/static")
+//
+//        if (!resourcesStatic.exists()) {
+//            println("[GRADLE TASKS] - resources/static folder does not exist. Creating...")
+//            resourcesStatic.mkdirs()
+//        } else {
+//            println("[GRADLE TASKS] - resources/static folder exist. Clearing...")
+//            delete(resourcesStatic)
+//            resourcesStatic.mkdirs()
+//        }
+//
+//        project.copy {
+//            from(uiDist)
+//            into(resourcesStatic)
+//        }
+//
+//        println("[GRADLE TASKS] - UI dist copied successfully.")
+//    }
+//}
 
 //tasks.findByName("bootRun")?.dependsOn("buildUI")
 //tasks.findByName("bootBuildImage")?.dependsOn("buildUI")

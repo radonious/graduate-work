@@ -64,6 +64,10 @@ class FileStorageService {
     fun saveArchive(file: MultipartFile): String {
         val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("Файл не имеет имени")
 
+        if (!originalFilename.endsWith(".zip", ignoreCase = true)) {
+            throw InvalidFileTypeException("Допускаются только .zip архивы")
+        }
+
         val archivePath = FileStorageProperties.getUploadPath().resolve(originalFilename)
         file.transferTo(archivePath.toFile())
 
