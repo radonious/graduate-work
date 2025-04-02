@@ -1,11 +1,13 @@
-package edu.plag.analysis.parser
+package edu.plag.core.parser
 
 import JavaLexer
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.Token
+import org.springframework.stereotype.Component
 import java.io.StringReader
 
+@Component
 class TokenParser {
 
     /**
@@ -21,7 +23,7 @@ class TokenParser {
             .map { normalizeToken(it) }
     }
 
-    // TODO: подумать что еще заменять
+    // TODO: (AFTER ALL) подумать что еще заменять
     /**
      * Нормализует вид токена
      */

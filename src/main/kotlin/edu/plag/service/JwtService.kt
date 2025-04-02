@@ -9,7 +9,6 @@ import java.util.*
 import java.util.function.Function
 import javax.crypto.SecretKey
 
-
 @Service
 class JwtService {
     /**

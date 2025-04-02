@@ -1,7 +1,7 @@
 package edu.plag.service
 
 import edu.plag.exceptions.InvalidFileTypeException
-import edu.plag.util.FileStorageProperties
+import edu.plag.util.FileUtils
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
@@ -14,12 +14,8 @@ import kotlin.io.path.name
 @Service
 class FileStorageService {
 
-    // TODO: нужно ли сохранять файлы (путь, автор и тп) в бд, если по сути они просто перебираются
-    //  вар 1. Нет, при проверке мы перебираем все/какие-то файлы
-    //  вар 2. Да, например для информации об истории чего-то
-
     init {
-        Files.createDirectories(FileStorageProperties.getUploadPath())
+        Files.createDirectories(FileUtils.getUploadPath())
     }
 
     companion object {
@@ -55,7 +51,7 @@ class FileStorageService {
         }
 
         val fileName = "${createFileNamePrefix()}_${originalFilename}"
-        val targetLocation = FileStorageProperties.getUploadPath().resolve(fileName)
+        val targetLocation = FileUtils.getUploadPath().resolve(fileName)
 
         Files.copy(file.inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING)
         return fileName
@@ -68,16 +64,16 @@ class FileStorageService {
             throw InvalidFileTypeException("Допускаются только .zip архивы")
         }
 
-        val archivePath = FileStorageProperties.getUploadPath().resolve(originalFilename)
+        val archivePath = FileUtils.getUploadPath().resolve(originalFilename)
         file.transferTo(archivePath.toFile())
 
         val archiveName = archivePath.fileName.toString().removeSuffix(".zip")
         val prefix = "${createFileNamePrefix()}_"
         val folderName = "${prefix}${archiveName}"
-        val extractDir = FileStorageProperties.getUploadPath().resolve(folderName)
+        val extractDir = FileUtils.getUploadPath().resolve(folderName)
 
         extractDir.createDirectories()
-        FileStorageProperties.unzip(archivePath.toFile(), extractDir.toFile())
+        FileUtils.unzip(archivePath.toFile(), extractDir.toFile())
 
         // Удаление системных файлов и директорий (снизу вверх)
         extractDir.toFile().walkBottomUp().forEach {

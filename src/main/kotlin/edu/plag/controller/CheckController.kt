@@ -1,6 +1,8 @@
 package edu.plag.controller
 
+import edu.plag.dto.CheckResults
 import edu.plag.dto.CheckSettings
+import edu.plag.service.CheckService
 import edu.plag.service.FileStorageService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -16,16 +18,17 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/api/v1/check")
 @Validated
 class CheckController(
-    private val fileStorageService: FileStorageService
+    private val fileStorageService: FileStorageService,
+    private val checkService: CheckService,
 ) {
     @Operation(summary = "Check code snippet for plagiarism")
     @PostMapping(value = ["/snippet"], consumes = ["multipart/form-data"])
     fun checkCodeSnippet(
         @RequestPart("snippet") @Valid snippet: String,
         @RequestPart("settings") @Valid settings: CheckSettings
-    ): ResponseEntity<String> {
-        // ...
-        return ResponseEntity.ok("Проверка кода выполнена\n$snippet\n$settings")
+    ): ResponseEntity<CheckResults> {
+        val res = checkService.check(snippet, settings)
+        return ResponseEntity.ok(res)
     }
 
     @Operation(summary = "Check file for plagiarism")
@@ -34,9 +37,9 @@ class CheckController(
         @RequestPart("file") file: MultipartFile,
         @RequestPart("settings") @Valid settings: CheckSettings
     ): ResponseEntity<String> {
-        fileStorageService.saveFile(file)
         // Вернуть сам файл
         // Начать проверку
+        if (settings.saveFileInDatabase) fileStorageService.saveFile(file)
         return ResponseEntity.ok("Проверка файла выполнена\n${file.name}\n$settings")
     }
 
@@ -46,9 +49,9 @@ class CheckController(
         @RequestPart("file") file: MultipartFile,
         @RequestPart("settings") @Valid settings: CheckSettings
     ): ResponseEntity<String> {
-        fileStorageService.saveArchive(file)
         // Вернуть сам проект
         // Начать проверку
+        if (settings.saveFileInDatabase) fileStorageService.saveArchive(file)
         return ResponseEntity.ok("Проверка проекта выполнена\n${file.name}\n$settings")
     }
 }
