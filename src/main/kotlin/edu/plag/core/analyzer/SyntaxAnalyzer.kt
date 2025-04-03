@@ -19,8 +19,11 @@ class SyntaxAnalyzer(
 ) {
 
     companion object {
-        private val VERTEX_EDIT_COST = 1.0
-        private val EDGE_EDIT_COST = 0.2
+        private const val ISOMORPHISM_WEIGHT = 0.4
+        private const val EDIT_DISTANCE_WEIGHT = 0.6
+
+        private const val VERTEX_EDIT_COST = 1.0
+        private const val EDGE_EDIT_COST = 0.2
     }
 
     /**
@@ -36,12 +39,11 @@ class SyntaxAnalyzer(
             val inspector = VF2SubgraphIsomorphismInspector(
                 dbAstGraph,
                 subgraph,
+                // TODO: (LATER) проверить нужен ли кастомный компаратор
                 { a, b -> a.substringBefore("_").compareTo(b.substringBefore("_")) },
                 null
             )
             if (inspector.isomorphismExists()) {
-                println("Vertices: $it")
-                println("Edges: ${subgraph.edgeSet()}\n")
                 return@generatePowerSet true
             }
             return@generatePowerSet false
@@ -84,8 +86,7 @@ class SyntaxAnalyzer(
     }
 
     fun editDistance(
-        graph1: DefaultDirectedGraph<String, DefaultEdge>,
-        graph2: DefaultDirectedGraph<String, DefaultEdge>
+        graph1: DefaultDirectedGraph<String, DefaultEdge>, graph2: DefaultDirectedGraph<String, DefaultEdge>
     ): Double {
         val vertices1 = graph1.vertexSet()
         val vertices2 = graph2.vertexSet()
@@ -138,15 +139,18 @@ class SyntaxAnalyzer(
         val userGraph = graphParser.parseGraph(userAst)
         val dbGraph = graphParser.parseGraph(dbAst)
 
-        // TODO: (AFTER ALL) высчитывать оптимальный размер динамически
+        // TODO: (AFTER ALL) высчитывать оптимальный  minSize динамически
         val hasIsomorphism = hasAstPlagiarism(userGraph, dbGraph, 9)
         val editDistance = editDistance(userGraph, dbGraph)
         val editDistanceScore = scoreEditDistance(userGraph, dbGraph, editDistance)
+
+        val finalScore = editDistanceScore * EDIT_DISTANCE_WEIGHT + if (hasIsomorphism) ISOMORPHISM_WEIGHT else 0.0
 
         return SyntaxAnalyzerResults(
             hasIsomorphism = hasIsomorphism,
             editDistance = editDistance,
             editDistanceScore = editDistanceScore,
+            finalScore = finalScore,
         )
     }
 }

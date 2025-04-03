@@ -15,20 +15,21 @@ class TokenParser {
      */
     fun parseTokens(sourceCode: String): List<String> {
         val lexer = JavaLexer(CharStreams.fromReader(StringReader(sourceCode)))
-        val tokens = CommonTokenStream(lexer)
-        tokens.fill() // Заполняем поток токенами
+        val tokenStream = CommonTokenStream(lexer)
+        tokenStream.fill() // Заполняем поток токенами
 
-        return tokens.tokens
+        return tokenStream.tokens
             .filter { it.type != Token.EOF && it.type != JavaLexer.WS } // Убираем пробелы
             .map { normalizeToken(it) }
     }
 
-    // TODO: (AFTER ALL) подумать что еще заменять
+
     /**
      * Нормализует вид токена
      */
     private fun normalizeToken(token: Token): String {
         return when (token.type) {
+            // TODO: (AFTER ALL) подумать что еще заменять при нормализации
             JavaLexer.LINE_COMMENT, JavaLexer.COMMENT -> "" // Убираем комментарии
             // JavaLexer.IDENTIFIER -> "VAR" // Нормализуем все идентификаторы
             JavaLexer.DECIMAL_LITERAL, JavaLexer.FLOAT_LITERAL, JavaLexer.STRING_LITERAL -> "CONST" // Нормализуем литералы

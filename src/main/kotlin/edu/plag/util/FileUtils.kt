@@ -34,25 +34,5 @@ class FileUtils {
                 }
             }
         }
-
-        fun tryReadFile(file: Path, maxAttempts: Int = 3): String {
-            val encodings = listOf(
-                StandardCharsets.UTF_8,
-                Charset.forName("Windows-1251"),
-                StandardCharsets.ISO_8859_1
-            )
-
-            var lastException: Exception? = null
-
-            for (encoding in encodings.take(maxAttempts)) {
-                try {
-                    return Files.readString(file, encoding)
-                } catch (e: Exception) {
-                    lastException = e
-                }
-            }
-
-            throw lastException ?: IllegalStateException("Не удалось прочитать файл: $file")
-        }
     }
 }

@@ -27,7 +27,9 @@ class CheckController(
         @RequestPart("snippet") @Valid snippet: String,
         @RequestPart("settings") @Valid settings: CheckSettings
     ): ResponseEntity<CheckResults> {
-        val res = checkService.check(snippet, settings)
+        val res = checkService.checkSnippet(snippet, settings)
+        // TODO: (LATER) добавить cron для очистки одинаковых файлов в базе (или проверять/блокировать их добавление)
+        if (settings.saveFileInDatabase) fileStorageService.saveSnippet(snippet)
         return ResponseEntity.ok(res)
     }
 
@@ -37,8 +39,7 @@ class CheckController(
         @RequestPart("file") file: MultipartFile,
         @RequestPart("settings") @Valid settings: CheckSettings
     ): ResponseEntity<String> {
-        // Вернуть сам файл
-        // Начать проверку
+
         if (settings.saveFileInDatabase) fileStorageService.saveFile(file)
         return ResponseEntity.ok("Проверка файла выполнена\n${file.name}\n$settings")
     }

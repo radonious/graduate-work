@@ -33,14 +33,22 @@ class FileStorageService {
             ".apdisk",
             ".fseventsd",
             ".VolumeIcon.icns",
-            // А также директории для удаления
+            // Директории для удаления
             "generated",
             "test"
         )
     }
 
     private fun createFileNamePrefix(): String {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss"))
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss-SSS"))
+    }
+
+    fun saveSnippet(code: String): String {
+        val fileName = "${createFileNamePrefix()}_snippet.java"
+        val uploadsDir = FileUtils.getUploadPath()  // Получаем путь к папке uploads
+        val filePath = uploadsDir.resolve(fileName) // Формируем полный путь к файлу
+        Files.write(filePath, code.toByteArray())
+        return fileName
     }
 
     fun saveFile(file: MultipartFile): String {

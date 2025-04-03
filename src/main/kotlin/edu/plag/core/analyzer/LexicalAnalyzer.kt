@@ -17,10 +17,10 @@ class LexicalAnalyzer(
      * Сумма весов должна быть равна 1
      */
     companion object {
-        private val LCS_SCORE_WEIGHT = 0.50
-        private val DEMERAU_SCORE_WEIGHT = 0.40
-        private val JACCARD_SCORE_WEIGHT = 0.05
-        private val K_GRAM_SCORE_WEIGHT = 0.05
+        private const val LCS_SCORE_WEIGHT = 0.50
+        private const val DAMERAU_SCORE_WEIGHT = 0.40
+        private const val JACCARD_SCORE_WEIGHT = 0.05
+        private const val K_GRAM_SCORE_WEIGHT = 0.05
     }
 
     /**
@@ -85,14 +85,16 @@ class LexicalAnalyzer(
         return if (union == 0.0) 0.0 else intersection / union
     }
 
-    /**
-     *  Разбиение на K-граммы (Fingerprint Hashing)
-     *  Разбивает код на последовательности длины k (например, 3-граммы).
-     */
+
     private fun kGrams(tokens: List<String>, k: Int): Set<String> {
         return tokens.windowed(k, 1, partialWindows = false).map { it.joinToString(" ") }.toSet()
     }
 
+    /**
+     *  Сравнение K-грамм (Fingerprint Hashing)
+     *  Разбивает код на последовательности длины k (например, 3-граммы).
+     *  Проверяет насколько полученные множества идентичны
+     */
     private fun scoreKGrams(tokens1: List<String>, tokens2: List<String>, k: Int): Double {
         val grams1 = kGrams(tokens1, k)
         val grams2 = kGrams(tokens2, k)
@@ -102,7 +104,8 @@ class LexicalAnalyzer(
     }
 
     /**
-     * Подробные результаты анализа
+     * Подробные результаты анализа.
+     * Включает в себя результаты всех методов и итоговую оценку
      */
     fun analyze(userCode: String, dbCode: String, k: Int = 3): LexicalAnalyzerResults {
         val userTokens = tokenParser.parseTokens(userCode)
@@ -115,7 +118,7 @@ class LexicalAnalyzer(
         val jaccardScore = scoreJaccard(userTokens, dbTokens)
         val kgramScore = scoreKGrams(userTokens, dbTokens, k)
         val finalScore =
-            lcsScore * LCS_SCORE_WEIGHT + damerauScore * DEMERAU_SCORE_WEIGHT + jaccardScore * JACCARD_SCORE_WEIGHT + kgramScore * K_GRAM_SCORE_WEIGHT
+            lcsScore * LCS_SCORE_WEIGHT + damerauScore * DAMERAU_SCORE_WEIGHT + jaccardScore * JACCARD_SCORE_WEIGHT + kgramScore * K_GRAM_SCORE_WEIGHT
 
         return LexicalAnalyzerResults(
             userCodeLexemesCount = userTokens.size,

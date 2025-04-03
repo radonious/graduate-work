@@ -43,6 +43,10 @@ class GraphParser {
                 stack.removeLast()
             }
 
+            /**
+             * Метод visit() для разных типов Node имеет разную реализацию,
+             * авторы JavaParser не сделали универсальный visit().
+             */
             override fun visit(n: ClassOrInterfaceDeclaration, arg: Void?) {
                 handleNode("CLASS") { super.visit(n, arg) }
             }
