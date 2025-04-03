@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import java.util.function.Consumer
+import java.util.zip.ZipException
 
 
 /**
@@ -53,6 +54,11 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidFileTypeException::class)
     fun handleInvalidFileTypeException(ex: InvalidFileTypeException): ResponseEntity<String> {
+        return ResponseEntity(ex.message, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(ZipException::class)
+    fun handleZipException(ex: ZipException): ResponseEntity<String> {
         return ResponseEntity(ex.message, HttpStatus.BAD_REQUEST)
     }
 }

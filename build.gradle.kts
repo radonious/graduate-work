@@ -38,6 +38,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:3.4.3")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.4.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
     // implementation("org.springframework.boot:spring-boot-starter-data-rest:3.4.3")
     // implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
 
@@ -63,6 +64,8 @@ dependencies {
     kapt("org.mapstruct:mapstruct-processor:1.6.3")
     implementation("org.apache.poi:poi-ooxml:5.3.0")
     implementation("org.apache.tika:tika-core:2.9.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.1")
 
     // Log
     // implementation("org.slf4j:slf4j-api:2.0.17")

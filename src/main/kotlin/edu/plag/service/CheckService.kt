@@ -3,8 +3,15 @@ package edu.plag.service
 import edu.plag.core.analyzer.LexicalAnalyzer
 import edu.plag.core.analyzer.SyntaxAnalyzer
 import edu.plag.dto.*
+import edu.plag.util.FileUtils
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
+import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 import kotlin.io.path.readText
+import kotlin.text.Charsets.UTF_8
 
 @Service
 class CheckService(
@@ -18,21 +25,21 @@ class CheckService(
         private const val SYNTAX_ANALYSIS_WEIGHT = 0.40
         private const val LEXICAL_ANALYSIS_WEIGHT = 0.60
 
-        private const val ACCEPTABLE_LINES_COUNT_DIFF_RATE = 0.5
+        private const val ACCEPTABLE_LINES_COUNT_DIFF_RATE = 0.25
     }
 
-    fun checkSnippet(userCode: String, settings: CheckSettings): CheckResults {
-        val userFileInfo = FileInfo("snippet", "", userCode.lines().size)
+    suspend fun checkSnippet(userCode: String, settings: CheckSettings, userFile: FileInfo? = null): CheckResults {
+        val userFileInfo = userFile ?: FileInfo.fromSnippet(userCode)
 
         val suspectsLexical = ArrayList<LexicalPair>()
         val suspectsSyntax = ArrayList<SyntaxPair>()
 
-        var checksCounter = 0;
+        var checksCounter = 0
         val startTime = System.nanoTime()
 
         fileService.getAllFiles().forEach {
             // TODO: (PRIORITY) продумать настройки и учесть их
-            val dbFileInfo = FileInfo.from(it)
+            val dbFileInfo = FileInfo.fromPath(it)
             if (!isAcceptableSize(userFileInfo.lines, dbFileInfo.lines)) return@forEach
             val dbCode = it.readText()
             ++checksCounter
@@ -48,7 +55,7 @@ class CheckService(
 
         val checkDuration = ((System.nanoTime() - startTime) / 1_000_000L).toInt()
 
-        val snippetCheck = SingleCheckResults(
+        val singleCheck = SingleCheckResults(
             source = userFileInfo,
             filesSuspectedByLexicalAnalyzer = suspectsLexical,
             filesSuspectedBySyntaxAnalyzer = suspectsSyntax,
@@ -58,14 +65,63 @@ class CheckService(
         val common = CommonCheckResults(
             duration = checkDuration,
             checks = checksCounter,
-            plagiarism = plagiarism, // TODO: (PRIORITY) у проекта должен считаться у четом размера файлов и их плагиата
+            plagiarism = plagiarism,
         )
 
         return CheckResults(
             common = common,
-            checks = listOf(snippetCheck),
+            checks = listOf(singleCheck),
             settings = settings,
         )
+    }
+
+    suspend fun checkFile(file: MultipartFile, settings: CheckSettings): CheckResults {
+        val userCode = String(file.bytes, UTF_8)
+        val userFileInfo = FileInfo.fromMultipartFile(file)
+        return checkSnippet(userCode, settings, userFileInfo)
+    }
+
+    suspend fun checkArchive(file: MultipartFile, settings: CheckSettings): CheckResults {
+        val tempFile = saveToTempFile(file)
+
+        val start = System.nanoTime()
+        val results = coroutineScope {
+            ZipFile(tempFile).use { zip ->
+                zip.entries().toList()
+                    .filter { isValidJavaFile(it) } // Оставляем только нужные файлы
+                    .map { entry ->
+                        async(Dispatchers.Default) { processEntry(zip, entry, settings) }
+                    }.awaitAll() // Ждём выполнения всех задач
+            }
+        }
+        val duration = ((System.nanoTime() - start) / 1_000_000).toInt()
+
+        tempFile.delete()
+        return sumResults(results, duration)
+    }
+
+    private fun saveToTempFile(file: MultipartFile): File {
+        val tempFile = kotlin.io.path.createTempFile(suffix = ".zip").toFile()
+        file.inputStream.use { input -> tempFile.outputStream().use { input.copyTo(it) } }
+        return tempFile
+    }
+
+    private suspend fun processEntry(zip: ZipFile, entry: ZipEntry, settings: CheckSettings): CheckResults {
+        return withContext(Dispatchers.IO) {
+            val content = zip.getInputStream(entry).bufferedReader().use { it.readText() }
+            val fileInfo = FileInfo(
+                filename = entry.name,
+                prefix = null,
+                lines = content.lines().size
+            )
+            checkSnippet(content, settings, fileInfo)
+        }
+    }
+
+    private fun isValidJavaFile(entry: ZipEntry): Boolean {
+        return !entry.isDirectory &&
+                entry.name.endsWith(".java", true) &&
+                !FileUtils.systemEntries.any { entry.name.startsWith(it) || entry.name.contains("/$it") }
     }
 
     private fun isAcceptableSize(userLines: Int, dbLines: Int): Boolean {
@@ -92,15 +148,39 @@ class CheckService(
             syntaxAccum += it.results.finalScore * it.file.lines
         }
 
-        return LEXICAL_ANALYSIS_WEIGHT * (lexicalAccum / lexicalLines) + SYNTAX_ANALYSIS_WEIGHT * (syntaxAccum / syntaxLines)
+        val lexicalScore =
+            if (lexicalAccum == 0.0 || lexicalLines == 0) 0.0 else LEXICAL_ANALYSIS_WEIGHT * (lexicalAccum / lexicalLines)
+        val syntaxScore =
+            if (syntaxAccum == 0.0 || syntaxLines == 0) 0.0 else SYNTAX_ANALYSIS_WEIGHT * (syntaxAccum / syntaxLines)
+
+        return lexicalScore + syntaxScore
     }
 
-    // TODO: (PRIORITY ASAP) реализовать
-    fun checkFile(userCode: String, settings: CheckSettings): CheckResults {
-        TODO()
-    }
+    private fun sumResults(results: List<CheckResults>, duration: Int): CheckResults {
+        var totalChecks = 0
+        var totalAccum = 0.0
+        var totalLines = 0L
+        val checks = ArrayList<SingleCheckResults>()
 
-    fun checkArchive() {
-        TODO()
+        results.forEach { checkResult ->
+            val fileInfo = checkResult.checks.first().source
+            checks.addAll(checkResult.checks)
+            totalChecks += checkResult.common.checks
+            totalAccum += checkResult.common.plagiarism * fileInfo.lines
+            totalLines += fileInfo.lines
+        }
+
+        val common = results.first().common.copy(
+            duration = duration,
+            checks = totalChecks,
+            plagiarism = totalAccum / totalLines,
+            unique = 1.0 - totalAccum / totalLines
+        )
+
+        return CheckResults(
+            common = common,
+            checks = checks,
+            settings = results.first().settings
+        )
     }
 }

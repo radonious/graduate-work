@@ -31,12 +31,12 @@ git clone https://github.com/radonious/graduate-work.git
 # 1. Set Up your .env
 cp .env.example .env
 
-# 2.1. Build locally & Run in Docker (Recommended, ~45sec)
+# 2.1 Run locally (Fast, Requires running DB, 5-15sec) 
+gradle clean bootRun
+
+# 2.2. Build locally & Run in Docker (Recommended, 15-30sec)
 gradle clean bootBuildImage
 docker compose up -d --no-build
-
-# 2.2 Run locally (Fast, Requires running DB, ~15sec) 
-gradle clean bootRun
 
 # 2.2. Run fully in Docker (Slow, ~3min)
 docker compose up -d

@@ -33,7 +33,6 @@ data class SecurityConfig(
 
         private val SECURED_PATHS = arrayOf(
             "/api/v1/users/**",
-            "/api/v1/upload/**",
             "/api/v1/check/**",
         )
     }

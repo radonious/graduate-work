@@ -6,6 +6,7 @@ import edu.plag.dto.SyntaxAnalyzerResults
 import org.jgrapht.Graph
 import org.jgrapht.alg.isomorphism.VF2SubgraphIsomorphismInspector
 import org.jgrapht.graph.AbstractBaseGraph
+import org.jgrapht.graph.AsSubgraph
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.DefaultEdge
 import org.springframework.stereotype.Component
@@ -29,30 +30,42 @@ class SyntaxAnalyzer(
     /**
      * Проверяем наличие изоморфных подграфов
      */
-    fun hasAstPlagiarism(
+     fun hasAstPlagiarism(
         userAstGraph: AbstractBaseGraph<String, DefaultEdge>,
         dbAstGraph: AbstractBaseGraph<String, DefaultEdge>,
         minSize: Int = 9
     ): Boolean {
-        return generatePowerSet(userAstGraph.vertexSet(), minSize) {
-            val subgraph = createInducedSubgraph(userAstGraph, it)
-            val inspector = VF2SubgraphIsomorphismInspector(
-                dbAstGraph,
-                subgraph,
-                // TODO: (LATER) проверить нужен ли кастомный компаратор
-                { a, b -> a.substringBefore("_").compareTo(b.substringBefore("_")) },
-                null
-            )
-            if (inspector.isomorphismExists()) {
-                return@generatePowerSet true
+        val dbInvariant = calculateGraphInvariant(dbAstGraph)
+        val vertices = userAstGraph.vertexSet().toSet()
+
+        return generatePowerSet(vertices, minSize) { subset ->
+            val subgraph = createInducedSubgraph(userAstGraph, subset)
+            // Если инварианты не совпадают – сразу пропускаем проверку
+            if (calculateGraphInvariant(subgraph) != dbInvariant) {
+                false
+            } else {
+                val inspector = VF2SubgraphIsomorphismInspector(
+                    dbAstGraph,
+                    subgraph,
+                    { a, b -> a.substringBefore("_").compareTo(b.substringBefore("_")) },
+                    null
+                )
+                inspector.isomorphismExists()
             }
-            return@generatePowerSet false
         }
+    }
+
+    private fun calculateGraphInvariant(graph: Graph<String, DefaultEdge>): Int {
+        return graph.vertexSet()
+            .map { vertex -> graph.inDegreeOf(vertex) + graph.outDegreeOf(vertex) }
+            .sorted()
+            .hashCode()
     }
 
     /**
      * Все комбинации элементов (без перестановок)
      */
+    // TODO: (LATER) переделать метод, если на большой базе будут долгие проверки после оптимизаций
     private fun <T> generatePowerSet(input: Set<T>, size: Int, action: (Set<T>) -> Boolean): Boolean {
         val n = input.size
         val elements = input.toList()
@@ -72,17 +85,27 @@ class SyntaxAnalyzer(
         return false
     }
 
+    /**
+     * Сделать подграф по определенным вершинам графа
+     */
+    private fun <V> createInducedSubgraph(
+        graph: Graph<V, DefaultEdge>,
+        vertices: Set<V>
+    ): Graph<V, DefaultEdge> {
+        return AsSubgraph(graph, vertices)
+    }
+
     fun scoreEditDistance(
         graph1: DefaultDirectedGraph<String, DefaultEdge>,
         graph2: DefaultDirectedGraph<String, DefaultEdge>,
         editDistance: Double,
     ): Double {
-        val maxVertexes = max(graph1.vertexSet().size, graph2.vertexSet().size).toDouble()
-        val maxEdges = max(graph1.edgeSet().size, graph2.edgeSet().size).toDouble()
-
+        val maxVertexes = max(graph1.vertexSet().size, graph2.vertexSet().size)
+        val maxEdges = max(graph1.edgeSet().size, graph2.edgeSet().size)
         val maxPossibleEdits = maxVertexes * VERTEX_EDIT_COST + maxEdges * EDGE_EDIT_COST
-        val result = max(1.0 - (editDistance / maxPossibleEdits), 0.0)
-        return min(result, 1.0)
+
+        if (maxPossibleEdits == 0.0) return 0.0
+        return min(max(1.0 - (editDistance / maxPossibleEdits), 0.0), 1.0)
     }
 
     fun editDistance(
@@ -107,26 +130,6 @@ class SyntaxAnalyzer(
 
     private fun <T> Set<T>.symmetricDifference(other: Set<T>): Set<T> {
         return (this union other) - (this intersect other)
-    }
-
-
-    /**
-     * Сделать подграф по определенным вершинам графа
-     */
-    private fun <V> createInducedSubgraph(graph: Graph<V, DefaultEdge>, vertices: Set<V>): Graph<V, DefaultEdge> {
-        val subgraph: Graph<V, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
-
-        vertices.forEach { subgraph.addVertex(it) }
-
-        graph.edgeSet().forEach { edge ->
-            val source = graph.getEdgeSource(edge)
-            val target = graph.getEdgeTarget(edge)
-            if (source in vertices && target in vertices) {
-                subgraph.addEdge(source, target)
-            }
-        }
-
-        return subgraph
     }
 
     /**

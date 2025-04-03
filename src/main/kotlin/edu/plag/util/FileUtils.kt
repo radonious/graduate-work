@@ -2,8 +2,6 @@ package edu.plag.util
 
 import org.springframework.stereotype.Component
 import java.io.File
-import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -13,6 +11,23 @@ import java.util.zip.ZipFile
 class FileUtils {
 
     companion object {
+        val systemEntries: Set<String> = setOf(
+            ".DS_Store",
+            "__MACOSX",
+            "Thumbs.db",
+            ".Spotlight-V100",
+            ".Trashes",
+            "desktop.ini",
+            ".AppleDouble",
+            "ehthumbs_vista.db",
+            ".TemporaryItems",
+            ".apdisk",
+            ".fseventsd",
+            ".VolumeIcon.icns",
+            "generated",
+            "test"
+        )
+
         fun getUploadPath(): Path = Paths.get("uploads").toAbsolutePath().normalize().also {
             Files.createDirectories(it)
         }

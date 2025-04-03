@@ -19,24 +19,7 @@ class FileStorageService {
     }
 
     companion object {
-        private val systemEntries: Set<String> = setOf(
-            // Список системных файлов
-            ".DS_Store",
-            "__MACOSX",
-            "Thumbs.db",
-            ".Spotlight-V100",
-            ".Trashes",
-            "desktop.ini",
-            ".AppleDouble",
-            "ehthumbs_vista.db",
-            ".TemporaryItems",
-            ".apdisk",
-            ".fseventsd",
-            ".VolumeIcon.icns",
-            // Директории для удаления
-            "generated",
-            "test"
-        )
+
     }
 
     private fun createFileNamePrefix(): String {
@@ -85,7 +68,7 @@ class FileStorageService {
 
         // Удаление системных файлов и директорий (снизу вверх)
         extractDir.toFile().walkBottomUp().forEach {
-            if (systemEntries.contains(it.name)) {
+            if (FileUtils.systemEntries.contains(it.name)) {
                 if (it.isDirectory) {
                     it.deleteRecursively()
                 } else {
