@@ -1,0 +1,18 @@
+{
+    "navbar": {
+        "home": "首页",
+        "history": "历史",
+        "about": "关于项目",
+        "profile": "侧面像",
+        "login": "登录",
+        "logout": "注销"
+    },
+    "login": {
+        "title": "登录",
+        "username": "用户名",
+        "password": "密码",
+        "submit": "提交",
+        "success": "登录成功!"
+    },
+    "language": "语言"
+}

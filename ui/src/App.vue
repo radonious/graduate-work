@@ -1,10 +1,8 @@
 <template>
-  <div id="app">
-    <!-- Навигационная панель -->
-    <Navbar/>
-    <!-- Здесь будут отображаться меняющиеся компоненты -->
-    <router-view></router-view>
-  </div>
+  <!-- Навигационная панель -->
+  <Navbar />
+  <!-- Отображение текущей страницы по route -->
+  <router-view></router-view>
 </template>
 
 <script>
@@ -17,3 +15,25 @@ export default {
   }
 }
 </script>
+
+<style>
+body {
+  justify-self: center;
+  width: 75%;
+  max-width: 1440px;
+  min-width: 700px;
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+}
+
+a,
+input,
+button,
+select,
+option {
+  min-width: 90px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+</style>

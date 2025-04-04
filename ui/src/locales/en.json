@@ -1,0 +1,18 @@
+{
+    "navbar": {
+        "home": "Home",
+        "history": "History",
+        "about": "About",
+        "profile": "Profile",
+        "login": "Log In",
+        "logout": "Log Out"
+    },
+    "login": {
+        "title": "Login",
+        "username": "Username",
+        "password": "Password",
+        "submit": "Sign In",
+        "success": "Login successful!"
+    },
+    "language": "Language"
+}
