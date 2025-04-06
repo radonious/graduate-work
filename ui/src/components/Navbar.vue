@@ -22,7 +22,6 @@
             <RouterLink class="auth-button" to="/login" @click="logout">
                 {{ isAuthenticated ? $t("navbar.logout") : $t("navbar.login") }}
             </RouterLink>
-
         </div>
     </nav>
 </template>
@@ -67,8 +66,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 0px;
-    color: white;
+    padding: 20px 0;
 }
 
 .nav-left-part {

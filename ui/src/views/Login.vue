@@ -1,41 +1,41 @@
 <template>
-    <div class="container col-md-5">
-        <div class="login-top">
+    <div class="container col-md-4">
+        <div class="login-top row">
             <div class="card-header">
-                <h3 class="text-center">Login</h3>
+                <h3 class="text-center">{{ $t("login.title") }}</h3>
             </div>
             <div class="card-body">
                 <form @submit.prevent="handleLogin">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
+                        <label for="username" class="form-label">{{ $t("login.username") }}</label>
                         <input type="text" class="form-control" id="username" v-model="username" required>
                     </div>
                     <div class="mb-3">
-                        <span class="d-flex justify-content-between cursor-pointer">
-                            <label for="password" class="form-label">Password</label>
-                            <label @click="showPassword" class="cursor-pointer" id="showPassword">Hide</label>
+                        <span class="d-flex justify-content-between">
+                            <label for="password" class="form-label">{{ $t("login.password") }}</label>
+                            <label @click="showPassword" id="showPassword">{{ $t("login.show") }}</label>
                         </span>
                         <input type="password" class="form-control" id="password" v-model="password" required>
 
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="submit" class="btn btn-outline-dark rounded-pill login-btn">{{ $t("login.submit") }}</button>
                         <div v-if="errorMessage" class="text-danger mt-2">{{ errorMessage }}</div>
                     </div>
                 </form>
             </div>
         </div>
         <hr>
-        <div class="login-bottom text-center">
-            <p>Don't have an account?</p>
-            <RouterLink to="/register"><button class="btn btn-primary">Sign Up</button></RouterLink>
+        <div class="login-bottom text-center row">
+            <p class="register-text" >{{ $t("login.signup_text") }}</p>
+            <RouterLink to="/register"><button class="btn btn-outline-secondary rounded-pill register-btn">{{ $t("login.signup") }}</button></RouterLink>
         </div>
     </div>
 </template>
 
 <script>
-import { authService } from '@/service/authService.js';
-import { API_BASE_URL } from '../config.js';
+import { authService } from '../service/authService.js';
+import { API_BASE_URL } from '../../config.js';
 
 export default {
     name: 'Login',
@@ -65,20 +65,20 @@ export default {
                 const data = await response.json();
                 authService.setTokens(data.accessToken, data.refreshToken, data.role, data.userId, data.username);
                 console.log(authService.getTokens())
-                this.$router.push('/form-list');
+                this.$router.push('/home');
             } catch (error) {
                 this.errorMessage = error.message;
             }
         },
         showPassword() {
-            var input = document.getElementById("password");
-            var showPass = document.getElementById("showPassword");
-            if (input.type === "password") {
+          const input = document.getElementById("password");
+          const showPass = document.getElementById("showPassword");
+          if (input.type === "password") {
                 input.type = "text";
-                showPass.textContent = "Hide"
+                showPass.textContent =  this.$t("login.hide")
             } else {
                 input.type = "password";
-                showPass.textContent = "Show"
+                showPass.textContent = this.$t("login.show")
             }
         }
     }
@@ -89,5 +89,20 @@ export default {
 .form-control {
     height: 50px;
     font-size: 20px;
+}
+
+.login-btn {
+  margin: 10px 0;
+  width: 90%;
+  height: 50px;
+}
+
+.register-btn {
+  width: 60%;
+  height: 50px;
+}
+
+.register-text {
+  font-size: 20px;
 }
 </style>

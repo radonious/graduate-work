@@ -3,26 +3,32 @@
   <Navbar />
   <!-- Отображение текущей страницы по route -->
   <router-view></router-view>
+  <Footer />
 </template>
 
 <script>
 import Navbar from './components/Navbar.vue';
+import Footer from "./components/Footer.vue";
 
 export default {
   name: 'App',
   components: {
-    Navbar
+    Navbar,
+    Footer
   }
 }
 </script>
 
 <style>
+* {
+  font-family: "Poppins", sans-serif;
+}
+
 body {
   justify-self: center;
   width: 75%;
   max-width: 1440px;
   min-width: 700px;
-  font-family: 'Poppins', sans-serif;
   user-select: none;
 }
 

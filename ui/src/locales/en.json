@@ -7,12 +7,33 @@
         "login": "Log In",
         "logout": "Log Out"
     },
+    "footer": {
+        "copyright": "© A.M. Ermolaev, 2025",
+        "help": "Help",
+        "privacy": "Privacy",
+        "terms": "Terms"
+    },
     "login": {
-        "title": "Login",
+        "title": "Log In",
         "username": "Username",
         "password": "Password",
-        "submit": "Sign In",
-        "success": "Login successful!"
+        "hide": "Hide",
+        "show": "Show",
+        "submit": "Log In",
+        "success": "Login successful!",
+        "signup_text": "Don’t have an account?",
+        "signup": "Sign Up"
     },
-    "language": "Language"
+    "register": {
+        "title": "Registration",
+        "username": "Username",
+        "password": "Password",
+        "show": "Show",
+        "hide": "Hide",
+        "confirm_password": "Confirm Password",
+        "submit": "Create a new account",
+        "login_text": "Already have an account?",
+        "login": "Log In",
+        "passwords_not_match": "Passwords don’t match"
+    }
 }

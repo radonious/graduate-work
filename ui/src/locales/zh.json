@@ -7,12 +7,33 @@
         "login": "登录",
         "logout": "注销"
     },
+    "footer": {
+        "copyright": "© A.M. Ermolaev, 2025",
+        "help": "帮助",
+        "privacy": "隐私",
+        "terms": "条款"
+    },
     "login": {
         "title": "登录",
         "username": "用户名",
         "password": "密码",
+        "hide": "隐藏",
+        "show": "显示",
         "submit": "提交",
-        "success": "登录成功!"
+        "success": "登录成功!",
+        "signup_text": "还没有帐户？",
+        "signup": "创建个账户"
     },
-    "language": "语言"
+    "register": {
+        "title": "登记",
+        "username": "用户名",
+        "password": "密码",
+        "hide": "隐藏",
+        "show": "显示",
+        "confirm_password": "确认您的密码",
+        "submit": "注册账户",
+        "login_text": "已经有帐户？",
+        "login": "提交",
+        "passwords_not_match": "密码不匹配"
+    }
 }

@@ -61,7 +61,7 @@ class UserService(
     fun createUser(userRequest: UserRequest): UserResponse {
         val user: User = userMapper.toEntity(userRequest)
         if (userRepository.existsByUsername(user.username)) {
-            throw EntityExistsException("Username '${user.username}' already exists")
+            throw EntityExistsException("User with name '${user.username}' already exists")
         }
         val passwordCoded = passwordEncoder.encode(userRequest.password)
         val savedUser = userRepository.save(user.copy(password = passwordCoded))
