@@ -35,5 +35,33 @@
         "login_text": "已经有帐户？",
         "login": "提交",
         "passwords_not_match": "密码不匹配"
+    },
+    "profile": {
+        "title": "用户资料",
+        "username": "用户名",
+        "role": "角色",
+        "id": "用户身份",
+        "logout": "注销",
+        "delete": "删除帐户"
+    },
+    "home": {
+        "title": "反剽窃",
+        "snippet": {
+            "comment": "// 你的代码在这里"
+        },
+        "files": {
+            "drag": "拖放",
+            "supported": "仅支持 .java 和 .zip 文件",
+            "manual": "手动加载文件",
+            "choose": "选择文件",
+            "nothing": "没有加载任何内容",
+            "loaded": "加载的文件",
+            "size": "尺寸"
+        },
+        "settings": {
+            "load": "加载文件",
+            "check": "查看",
+            "progress": "进行中..."
+        }
     }
 }

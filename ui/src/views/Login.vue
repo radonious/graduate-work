@@ -34,8 +34,8 @@
 </template>
 
 <script>
-import { authService } from '../service/authService.js';
-import { API_BASE_URL } from '../../config.js';
+import {authService} from '../service/authService.js';
+import {API_BASE_URL} from '../../config.js';
 
 export default {
     name: 'Login',
@@ -58,8 +58,7 @@ export default {
                     body: JSON.stringify({ username: this.username, password: this.password })
                 });
                 if (!response.ok) {
-                    const errorData = await response.text();
-                    this.errorMessage = errorData;
+                  this.errorMessage = await response.text();
                     return;
                 }
                 const data = await response.json();
@@ -85,10 +84,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .form-control {
-    height: 50px;
-    font-size: 20px;
+    height: 50px !important;
+    font-size: 20px !important;
 }
 
 .login-btn {

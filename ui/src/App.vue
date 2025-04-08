@@ -33,7 +33,6 @@ body {
 }
 
 a,
-input,
 button,
 select,
 option {
@@ -42,4 +41,5 @@ option {
   vertical-align: middle;
   cursor: pointer;
 }
+
 </style>

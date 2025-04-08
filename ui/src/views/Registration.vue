@@ -40,8 +40,7 @@
 </template>
 
 <script>
-import { authService } from '../service/authService.js';
-import { API_BASE_URL } from '../../config.js';
+import {API_BASE_URL} from '../../config.js';
 
 export default {
   name: 'Register',
@@ -77,16 +76,14 @@ export default {
         });
 
         if (!response.ok) {
-          const errorData = await response.text();
-          this.errorMessage = errorData;
+          this.errorMessage = await response.text();
           return;
         }
 
-        const data = await response.json();
-        authService.setTokens(data.accessToken, data.refreshToken, data.role, data.userId, data.username);
         this.$router.push('/login');
+
       } catch (error) {
-        this.errorMessage = error.message;
+        this.errorMessage = error.message +"HELLOO";
       }
     },
     showPassword(fieldId) {

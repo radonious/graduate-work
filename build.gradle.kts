@@ -39,8 +39,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation:3.4.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
-    // implementation("org.springframework.boot:spring-boot-starter-data-rest:3.4.3")
-    // implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.3")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.4.3")
@@ -66,10 +64,6 @@ dependencies {
     implementation("org.apache.tika:tika-core:2.9.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.1")
-
-    // Log
-    // implementation("org.slf4j:slf4j-api:2.0.17")
-    // testImplementation("org.slf4j:slf4j-simple:2.0.17")
 
     // Files upload
     implementation("commons-io:commons-io:2.17.0")
@@ -116,81 +110,3 @@ sourceSets {
         java.srcDir("build/generated-src/antlr/main")
     }
 }
-
-//tasks.register("buildUI") {
-//    group = "custom"
-//    description = "Build UI and copy into static resources"
-//
-//    val distFolder by extra { file("ui/dist") }
-//    val uiFolder by extra { file("ui") }
-//    val env = file(".env")
-//
-//    doLast {
-//        if (!env.exists()) {
-//            throw GradleException("No .env in root folder")
-//        } else if (!uiFolder.exists()) {
-//            throw GradleException("No ui/ in root folder")
-//        }
-//
-//        if (distFolder.exists()) {
-//            println("[GRADLE TASKS] - ui/dist folder exist. Deleting...")
-//            delete(distFolder)
-//        }
-//
-//        exec {
-//            workingDir = uiFolder
-//            commandLine("npm", "install")
-//        }
-//
-//        exec {
-//            workingDir = uiFolder
-//            commandLine("npm", "fund")
-//        }
-//
-//        exec {
-//            workingDir = uiFolder
-//            commandLine("npm", "run", "build")
-//        }
-//
-//        if (!distFolder.exists()) {
-//            throw GradleException("Folder 'ui/dist' did not created. UI build problem.")
-//        }
-//
-//        println("[GRADLE TASKS] - UI built successfully.")
-//    }
-//
-//
-//    finalizedBy("copyToResources")
-//}
-//
-//
-//tasks.register("copyToResources") {
-//    group = "custom"
-//    description = "Copy data"
-//
-//    dependsOn("buildUI")
-//
-//    doLast {
-//        val uiDist = file("ui/dist")
-//        val resourcesStatic = file("src/main/resources/static")
-//
-//        if (!resourcesStatic.exists()) {
-//            println("[GRADLE TASKS] - resources/static folder does not exist. Creating...")
-//            resourcesStatic.mkdirs()
-//        } else {
-//            println("[GRADLE TASKS] - resources/static folder exist. Clearing...")
-//            delete(resourcesStatic)
-//            resourcesStatic.mkdirs()
-//        }
-//
-//        project.copy {
-//            from(uiDist)
-//            into(resourcesStatic)
-//        }
-//
-//        println("[GRADLE TASKS] - UI dist copied successfully.")
-//    }
-//}
-
-//tasks.findByName("bootRun")?.dependsOn("buildUI")
-//tasks.findByName("bootBuildImage")?.dependsOn("buildUI")

@@ -35,5 +35,33 @@
         "login_text": "Already have an account?",
         "login": "Log In",
         "passwords_not_match": "Passwords don’t match"
+    },
+    "profile": {
+        "title": "Profile",
+        "username": "Username",
+        "role": "Role",
+        "id": "User ID",
+        "logout": "Logout",
+        "delete": "Delete account"
+    },
+    "home": {
+        "title": "Anti-Plagiarism",
+        "snippet": {
+            "comment": "// Put your code here"
+        },
+        "files": {
+            "drag": "Drag & Drop",
+            "supported": "Supports only .java and .zip files",
+            "manual": "Load files manually",
+            "choose": "Choose file",
+            "nothing": "Nothing loaded",
+            "loaded": "Loaded file",
+            "size": "Size"
+        },
+        "settings": {
+            "load": "Load files",
+            "check": "Check",
+            "progress": "In progress..."
+        }
     }
 }
