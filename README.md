@@ -31,15 +31,21 @@ git clone https://github.com/radonious/graduate-work.git
 # 1. Set Up your .env
 cp .env.example .env
 
-# 2.1 Run locally (Requires running DB)
+# 2. Frontend
+cd ui
+npm install
+npm run build
+
+# 3. Backend
+# 3.1 Run locally (Requires running DB)
 docker compose up -d postgres 
 gradle clean build bootRun
 
-# 2.2. Build locally & Run in Docker (Recommended)
+# 3.2. Build locally & Run in Docker (Recommended)
 gradle clean bootBuildImage
 docker compose up -d --no-build
 
-# 2.2. Run fully in Docker (Slow)
+# 3.2. Run fully in Docker (Slow)
 docker compose up -d
 ```
 

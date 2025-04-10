@@ -61,7 +61,20 @@
         "settings": {
             "load": "Load files",
             "check": "Check",
-            "progress": "In progress..."
+            "progress": "In progress...",
+            "profile": {
+                "title": "Profile",
+                "speed": "Speed",
+                "quality": "Quality",
+                "custom": "Custom"
+            },
+            "minFileLength": "Minimum file length",
+            "maxFileLengthDiffRate": "Maximum file difference",
+            "lexicalPlagiarismThreshold": "Lexical plagiarism threshold",
+            "lexicalAnalysisEnable": "Lexical analysis",
+            "syntaxPlagiarismThreshold": "Syntax plagiarism threshold",
+            "syntaxAnalysisEnable": "Syntax analysis",
+            "saveSourcesIntoDatabase": "Save files on server"
         }
     }
 }

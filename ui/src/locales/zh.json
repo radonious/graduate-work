@@ -61,7 +61,20 @@
         "settings": {
             "load": "加载文件",
             "check": "查看",
-            "progress": "进行中..."
+            "progress": "进行中...",
+            "profile": {
+                "title": "检查个人资料",
+                "speed": "速度",
+                "quality": "质量",
+                "custom": "自定义"
+            },
+            "minFileLength": "最小文件长度",
+            "maxFileLengthDiffRate": "最大文件差异",
+            "lexicalPlagiarismThreshold": "词汇抄袭阈值",
+            "lexicalAnalysisEnable": "词汇分析",
+            "syntaxPlagiarismThreshold": "语法抄袭阈值",
+            "syntaxAnalysisEnable": "语法分析",
+            "saveSourcesIntoDatabase": "保存文件至数据库"
         }
     }
 }

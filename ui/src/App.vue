@@ -41,5 +41,4 @@ option {
   vertical-align: middle;
   cursor: pointer;
 }
-
 </style>

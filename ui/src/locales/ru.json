@@ -61,7 +61,20 @@
         "settings": {
             "load": "Загрузка файлов",
             "check": "Проверить",
-            "progress": "Проверка..."
+            "progress": "Проверка...",
+            "profile": {
+                "title": "Профиль",
+                "speed": "Скорость",
+                "quality": "Качество",
+                "custom": "Пользовательский"
+            },
+            "minFileLength": "Минимальная длина файла",
+            "maxFileLengthDiffRate": "Максимальная разница в длине файлов",
+            "lexicalPlagiarismThreshold": "Порог лексического плагиата",
+            "lexicalAnalysisEnable": "Лексический анализ",
+            "syntaxPlagiarismThreshold": "Порог синтаксического плагиата",
+            "syntaxAnalysisEnable": "Синтаксический анализ",
+            "saveSourcesIntoDatabase": "Сохранить файлы в базу проектов"
         }
     }
 }

@@ -63,9 +63,100 @@
         <span v-if="isLoading" class="spinner-border spinner-border-sm"></span>
         {{ isLoading ? $t("home.settings.progress") : $t("home.settings.check") }}
       </button>
+
+      <div>
+        <!-- Настройка профиля как btn-group -->
+        <div class="mb-3">
+          <label class="form-label">{{ $t("home.settings.profile.title") }}</label>
+          <div class="btn-group" role="group" aria-label="Profile selection">
+            <input type="radio"
+                   class="btn-check"
+                   name="profile"
+                   id="profileSpeed"
+                   value="speed"
+                   v-model="profile"
+                   @change="applyProfile"
+                   autocomplete="off">
+            <label class="btn btn-outline-primary" for="profileSpeed">{{ $t("home.settings.profile.speed") }}</label>
+
+            <input type="radio"
+                   class="btn-check"
+                   name="profile"
+                   id="profileQuality"
+                   value="quality"
+                   v-model="profile"
+                   @change="applyProfile"
+                   autocomplete="off">
+            <label class="btn btn-outline-primary" for="profileQuality">{{ $t("home.settings.profile.quality") }}</label>
+
+            <input type="radio"
+                   class="btn-check"
+                   name="profile"
+                   id="profileCustom"
+                   value="custom"
+                   v-model="profile"
+                   autocomplete="off">
+            <label class="btn btn-outline-primary" for="profileCustom">{{ $t("home.settings.profile.custom") }}</label>
+          </div>
+        </div>
+
+        <!-- Настройки -->
+        <div class="mb-3 d-flex col-md-9">
+          <label for="minFileLength" class="form-label mt-2">
+            {{ $t("home.settings.minFileLength") }}
+          </label>
+          <input type="number" id="minFileLength" class="form-control settings-counter" v-model.number="minFileLength">
+        </div>
+
+        <div class="mb-3 d-flex col-md-9">
+          <label for="maxFileLengthDiffRate" class="form-label">
+            {{ $t("home.settings.maxFileLengthDiffRate") }} ({{ (maxFileLengthDiffRate * 100).toFixed(0) }}%)
+          </label>
+          <input type="range" id="maxFileLengthDiffRate" class="form-range settings-slider" v-model.number="maxFileLengthDiffRate"
+                 min="0" max="1" step="0.01">
+        </div>
+
+        <div class="mb-3 form-check">
+          <input type="checkbox" id="lexicalAnalysisEnable" class="form-check-input" v-model="lexicalAnalysisEnable">
+          <label for="lexicalAnalysisEnable" class="form-check-label">
+            {{ $t("home.settings.lexicalAnalysisEnable") }}
+          </label>
+        </div>
+
+        <div class="mb-3">
+          <label for="lexicalPlagiarismThreshold" class="form-label">
+            {{ $t("home.settings.lexicalPlagiarismThreshold") }} ({{ (lexicalPlagiarismThreshold * 100).toFixed(0) }}%)
+          </label>
+          <input type="range" id="lexicalPlagiarismThreshold" class="form-range settings-slider"
+                 v-model.number="lexicalPlagiarismThreshold" min="0" max="1" step="0.01">
+        </div>
+
+        <div class="mb-3 form-check">
+          <input type="checkbox" id="syntaxAnalysisEnable" class="form-check-input" v-model="syntaxAnalysisEnable">
+          <label for="syntaxAnalysisEnable" class="form-check-label">
+            {{ $t("home.settings.syntaxAnalysisEnable") }}
+          </label>
+        </div>
+
+        <div class="mb-3">
+          <label for="syntaxPlagiarismThreshold" class="form-label">
+            {{ $t("home.settings.syntaxPlagiarismThreshold") }} ({{ (syntaxPlagiarismThreshold * 100).toFixed(0) }}%)
+          </label>
+          <input type="range" id="syntaxPlagiarismThreshold" class="form-range settings-slider"
+                 v-model.number="syntaxPlagiarismThreshold" min="0" max="1" step="0.01">
+        </div>
+
+        <div class="mb-3 form-check form-switch">
+          <input type="checkbox" id="saveSourcesIntoDatabase" class="form-check-input"
+                 v-model="saveSourcesIntoDatabase">
+          <label for="saveSourcesIntoDatabase" class="form-check-label">
+            {{ $t("home.settings.saveSourcesIntoDatabase") }}
+          </label>
+        </div>
+      </div>
     </div>
 
-    <!-- Временный вывод, пока нет она результата -->
+    <!-- TODO: Временный вывод, пока нет окна результата -->
     <div class="row">
       <textarea id="res" rows="25"/>
     </div>
@@ -81,17 +172,6 @@ import {lintGutter} from '@codemirror/lint'
 import {API_BASE_URL} from "../../config.js";
 import {authService} from "../service/authService.js";
 
-// TODO: удалить после поддержки настрйек
-const settingsStub = {
-  "minFileLength": 10,
-  "maxFileLengthDiffRate": 0.25,
-  "lexicalPlagiarismThreshold": 0.2,
-  "lexicalAnalysisEnable": true,
-  "syntaxPlagiarismThreshold": 0.2,
-  "syntaxAnalysisEnable": true,
-  "saveSourcesIntoDatabase": false,
-};
-
 const extensions = [
   basicSetup,
   java(),
@@ -105,6 +185,7 @@ export default {
   name: "Home",
   data() {
     return {
+      // Части страницы
       editorView: null,
       currentCode: this.$t("home.snippet.comment"),
       isLoading: false,
@@ -112,11 +193,65 @@ export default {
       textContent: '',
       selectedFile: null,
       isDragging: false,
-      fileError: null
+      fileError: null,
+      // Значения настроек
+      minFileLength: 0,
+      maxFileLengthDiffRate: 0.5,
+      lexicalAnalysisEnable: true,
+      syntaxAnalysisEnable: true,
+      lexicalPlagiarismThreshold: 0.5,
+      syntaxPlagiarismThreshold: 0.5,
+      saveSourcesIntoDatabase: false,
+      profile: "custom",
+      // Эталонные значения для профилей
+      profilesSettings: {
+        speed: {
+          minFileLength: 50,
+          maxFileLengthDiffRate: 0.3,
+          lexicalAnalysisEnable: true,
+          syntaxAnalysisEnable: false,
+          lexicalPlagiarismThreshold: 0.5,
+          syntaxPlagiarismThreshold: 0.5,
+        },
+        quality: {
+          minFileLength: 10,
+          maxFileLengthDiffRate: 0.2,
+          lexicalAnalysisEnable: true,
+          syntaxAnalysisEnable: true,
+          lexicalPlagiarismThreshold: 0.75,
+          syntaxPlagiarismThreshold: 0.75,
+        }
+      }
     }
   },
   mounted() {
     this.initEditor();
+
+    // Загрузка сохранённых настроек при монтировании
+    if (localStorage.getItem("minFileLength") !== null) {
+      this.minFileLength = Number(localStorage.getItem("minFileLength"));
+    }
+    if (localStorage.getItem("maxFileLengthDiffRate") !== null) {
+      this.maxFileLengthDiffRate = Number(localStorage.getItem("maxFileLengthDiffRate"));
+    }
+    if (localStorage.getItem("lexicalAnalysisEnable") !== null) {
+      this.lexicalAnalysisEnable = localStorage.getItem("lexicalAnalysisEnable") === "true";
+    }
+    if (localStorage.getItem("syntaxAnalysisEnable") !== null) {
+      this.syntaxAnalysisEnable = localStorage.getItem("syntaxAnalysisEnable") === "true";
+    }
+    if (localStorage.getItem("lexicalPlagiarismThreshold") !== null) {
+      this.lexicalPlagiarismThreshold = Number(localStorage.getItem("lexicalPlagiarismThreshold"));
+    }
+    if (localStorage.getItem("syntaxPlagiarismThreshold") !== null) {
+      this.syntaxPlagiarismThreshold = Number(localStorage.getItem("syntaxPlagiarismThreshold"));
+    }
+    if (localStorage.getItem("saveSourcesIntoDatabase") !== null) {
+      this.saveSourcesIntoDatabase = localStorage.getItem("saveSourcesIntoDatabase") === "true";
+    }
+    if (localStorage.getItem("profile") !== null) {
+      this.profile = localStorage.getItem("profile");
+    }
   },
   beforeUnmount() {
     this.editorView?.destroy();
@@ -126,8 +261,18 @@ export default {
       this.isLoading = true;
 
       try {
+        const settings = {
+          "minFileLength": this.minFileLength,
+          "maxFileLengthDiffRate": this.maxFileLengthDiffRate,
+          "lexicalPlagiarismThreshold": this.lexicalPlagiarismThreshold,
+          "syntaxPlagiarismThreshold": this.syntaxPlagiarismThreshold,
+          "lexicalAnalysisEnable": this.lexicalAnalysisEnable,
+          "syntaxAnalysisEnable": this.syntaxAnalysisEnable,
+          "saveSourcesIntoDatabase": this.saveSourcesIntoDatabase,
+        };
+
         const formData = new FormData()
-        formData.append('settings', new Blob([JSON.stringify(settingsStub)], {type: 'application/json'}), 'settings.json')
+        formData.append('settings', new Blob([JSON.stringify(settings)], {type: 'application/json'}), 'settings.json')
 
         let endpoint;
         let response;
@@ -259,11 +404,72 @@ export default {
         parent: this.$refs.editor
       });
     },
-  }
+    applyProfile() {
+      // При выборе профиля speed или quality устанавливаем эталонные значения
+      if (this.profile === "speed" || this.profile === "quality") {
+        const settings = this.profilesSettings[this.profile];
+        this.minFileLength = settings.minFileLength;
+        this.maxFileLengthDiffRate = settings.maxFileLengthDiffRate;
+        this.lexicalPlagiarismThreshold = settings.lexicalPlagiarismThreshold;
+        this.syntaxAnalysisEnable = settings.syntaxAnalysisEnable;
+        this.lexicalAnalysisEnable = settings.lexicalAnalysisEnable;
+        this.syntaxPlagiarismThreshold = settings.syntaxPlagiarismThreshold;
+      }
+    },
+    checkProfile() {
+      // Функция проверяет, совпадают ли текущие настройки с профилями speed/quality или устанавливаем профиль custom.
+      if (this.profile !== "custom") {
+        const expected = this.profilesSettings[this.profile];
+        if (
+            this.minFileLength !== expected.minFileLength ||
+            this.maxFileLengthDiffRate !== expected.maxFileLengthDiffRate ||
+            this.lexicalPlagiarismThreshold !== expected.lexicalPlagiarismThreshold ||
+            this.syntaxPlagiarismThreshold !== expected.syntaxPlagiarismThreshold ||
+            this.syntaxAnalysisEnable !== expected.syntaxAnalysisEnable ||
+            this.lexicalAnalysisEnable !== expected.lexicalAnalysisEnable
+        ) {
+          this.profile = "custom";
+        }
+      }
+    },
+  },
+  watch: {
+    // Следим за изменениями настроек и вызываем checkProfile
+    minFileLength() {
+      this.checkProfile();
+      localStorage.setItem("minFileLength", this.minFileLength);
+    },
+    maxFileLengthDiffRate() {
+      this.checkProfile();
+      localStorage.setItem("maxFileLengthDiffRate", this.maxFileLengthDiffRate);
+    },
+    lexicalAnalysisEnable(newVal) {
+      this.checkProfile();
+      localStorage.setItem("lexicalAnalysisEnable", newVal);
+    },
+    syntaxAnalysisEnable(newVal) {
+      this.checkProfile();
+      localStorage.setItem("syntaxAnalysisEnable", newVal);
+    },
+    lexicalPlagiarismThreshold() {
+      this.checkProfile();
+      localStorage.setItem("lexicalPlagiarismThreshold", this.lexicalPlagiarismThreshold);
+    },
+    syntaxPlagiarismThreshold() {
+      this.checkProfile();
+      localStorage.setItem("syntaxPlagiarismThreshold", this.syntaxPlagiarismThreshold);
+    },
+    saveSourcesIntoDatabase(newVal) {
+      localStorage.setItem("saveSourcesIntoDatabase", newVal);
+    },
+    profile(newVal) {
+      localStorage.setItem("profile", newVal);
+    }
+  },
 }
 </script>
 
-<style >
+<style>
 .editor {
   height: 410px;
   text-align: left;
@@ -330,6 +536,19 @@ export default {
   gap: 20px;
 }
 
+.settings label {
+
+}
+
+.settings-slider {
+  width: 300px;
+  margin-left: 20px;
+}
+
+.settings-counter {
+  width: 100px;
+}
+
 .form-switch {
   padding-top: 8px;
 }
@@ -341,5 +560,9 @@ export default {
 
 .form-control {
   height: 100%;
+}
+
+.form-label {
+  margin-right: 8px;
 }
 </style>

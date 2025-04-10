@@ -5,6 +5,7 @@
 *.war
 *.ear
 *.nar
+*.jks
 hs_err_pid*
 replay_pid*
 src/main/resources/static/
@@ -23,9 +24,9 @@ ui/dist/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+application-secrets.properties
 
 # Spring Boot specific
-src/main/resources/static/
 /logs/
 /tmp/
 
@@ -54,12 +55,8 @@ gradle-app.setting
 !gradle-wrapper.jar
 
 ## IntelliJ
-out/
 .idea/
 .idea_modules/
-*.iml
-*.ipr
-*.iws
 amplicode.xml
 
 ## Eclipse
@@ -79,7 +76,6 @@ local.properties
 ## NetBeans
 nbproject/private/
 nbbuild/
-dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
@@ -90,6 +86,9 @@ nb-configuration.xml
 
 ## OS X
 .DS_Store
+
+## Windows
+Thumbs.db
 
 ## Miscellaneous
 *.log
@@ -106,8 +105,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
+node_modules/
+dist/
 dist-ssr
 coverage
 *.local
@@ -118,7 +117,6 @@ coverage
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
 *.suo
 *.ntvs*
 *.njsproj
@@ -129,43 +127,21 @@ coverage
 
 ### STS ###
 .apt_generated
-.classpath
-.factorypath
-.project
 .settings
 .springBeans
 .sts4-cache
-bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
 # Node.js/Vite (Frontend)
-node_modules/
-dist/
 .vite/
+node_modules
+dist
+.cache/
+package-lock.json
+public/env.js
 
 # Docker
 docker/data/
 docker/logs/
 docker-compose.override.yml
-
-#Frontend
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
