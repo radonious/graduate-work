@@ -38,6 +38,16 @@ data class SingleCheckResults(
     val filesSuspectedBySyntaxAnalyzer: List<SyntaxPair>,
 )
 
+data class LexicalPair(
+    val file: FileInfo,
+    val results: LexicalAnalyzerResults,
+)
+
+data class SyntaxPair(
+    val file: FileInfo,
+    val results: SyntaxAnalyzerResults,
+)
+
 /**
  * Результаты лексического анализа для
  * 1 файла пользователя и N файлов из базы
@@ -54,11 +64,6 @@ data class LexicalAnalyzerResults(
     val finalScore: Double,
 )
 
-data class LexicalPair(
-    val file: FileInfo,
-    val results: LexicalAnalyzerResults,
-)
-
 /**
  * Результаты синтаксического анализа для
  * 1 файла пользователя и N файлов из базы
@@ -68,9 +73,4 @@ data class SyntaxAnalyzerResults(
     val editDistance: Double,
     val editDistanceScore: Double,
     val finalScore: Double,
-)
-
-data class SyntaxPair(
-    val file: FileInfo,
-    val results: SyntaxAnalyzerResults,
 )

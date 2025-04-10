@@ -19,21 +19,23 @@ class TokenParser {
         tokenStream.fill() // Заполняем поток токенами
 
         return tokenStream.tokens
-            .filter { it.type != Token.EOF && it.type != JavaLexer.WS } // Убираем пробелы
+            .filter { it.type != Token.EOF && it.type != JavaLexer.WS  } // Убираем пробелы
             .map { normalizeToken(it) }
     }
-
 
     /**
      * Нормализует вид токена
      */
     private fun normalizeToken(token: Token): String {
         return when (token.type) {
-            // TODO: (AFTER ALL) подумать что еще заменять при нормализации
+            // TODO: (LATER) подумать что еще заменять при нормализации
+            //  при этом стоит не переборщить с заменами, иначе будет слишком много сохжих элементов
+            //  заменять ест смысл только неинформативные/не важные конструкции.
+            //  Еще в теории комменты могут багать анализ из-за одинаковых элемнетов "" в списках
             JavaLexer.LINE_COMMENT, JavaLexer.COMMENT -> "" // Убираем комментарии
             // JavaLexer.IDENTIFIER -> "VAR" // Нормализуем все идентификаторы
-            JavaLexer.DECIMAL_LITERAL, JavaLexer.FLOAT_LITERAL, JavaLexer.STRING_LITERAL -> "CONST" // Нормализуем литералы
-            else -> token.text // Оставляем ключевые слова и операторы
+            JavaLexer.DECIMAL_LITERAL, JavaLexer.FLOAT_LITERAL, JavaLexer.STRING_LITERAL -> "LITERAL" // Нормализуем литералы
+            else -> token.text // Оставляем прочие ключевые слова, операторы и конструкции
         }
     }
 }

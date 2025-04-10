@@ -37,7 +37,7 @@ class UserService(
      */
     @Transactional(isolation = Isolation.READ_COMMITTED)
     fun findUserById(id: Long): UserResponse {
-        val user = userRepository.findById(id).orElseThrow { EntityNotFoundException("User not found with id: $id") }
+        val user = userRepository.findById(id).orElseThrow { EntityNotFoundException("User with id '$id' not found") }
         return userMapper.toDto(user)
     }
 
@@ -49,7 +49,7 @@ class UserService(
     @Transactional(isolation = Isolation.READ_COMMITTED)
     fun findUserByUsername(username: String): UserResponse {
         val user: User = userRepository.findByUsername(username)
-            .orElseThrow { EntityNotFoundException("User not found with username: $username") }
+            .orElseThrow { EntityNotFoundException("User with username '$username' not found") }
         return userMapper.toDto(user)
     }
 
@@ -77,7 +77,7 @@ class UserService(
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     fun updateUser(id: Long, userRequest: UserRequest): UserResponse {
         if (!userRepository.existsById(id)) {
-            throw EntityNotFoundException("User not found with id: $id")
+            throw EntityNotFoundException("User with id '$id' not found")
         }
         val passwordCoded = passwordEncoder.encode(userRequest.password)
         val updatedUser: User = userMapper.toEntity(userRequest).copy(id = id, password = passwordCoded)
@@ -92,7 +92,7 @@ class UserService(
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     fun deleteUser(id: Long) {
         if (!userRepository.existsById(id)) {
-            throw EntityNotFoundException("User not found with id: $id")
+            throw EntityNotFoundException("User with id '$id' not found")
         }
         userRepository.deleteById(id)
     }

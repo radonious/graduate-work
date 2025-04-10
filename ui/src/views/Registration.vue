@@ -83,7 +83,7 @@ export default {
         this.$router.push('/login');
 
       } catch (error) {
-        this.errorMessage = error.message +"HELLOO";
+        this.errorMessage = error.message;
       }
     },
     showPassword(fieldId) {

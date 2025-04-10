@@ -28,7 +28,7 @@ class TokenService(
     fun createRefreshToken(username: String): String {
         val refreshToken = UUID.randomUUID().toString()
         val user: User = userRepository.findByUsername(username)
-            .orElseThrow { UsernameNotFoundException("User not found with username: $username") }
+            .orElseThrow { UsernameNotFoundException("User with username '$username' not found") }
 
         userRepository.save<User>(user.copy(refreshToken = refreshToken))
 
@@ -43,13 +43,13 @@ class TokenService(
     fun refreshAccessToken(refreshToken: String): RefreshTokenResponse {
         val user: User = userRepository
             .findByRefreshToken(refreshToken)
-            .orElseThrow { RefreshTokenException("Refresh token not exists: $refreshToken") }
+            .orElseThrow { RefreshTokenException("Refresh token not exists '$refreshToken'") }
 
         return if (user.refreshToken.equals(refreshToken)) {
             val userDetails = userDetailsService.loadUserByUsername(user.username)
             RefreshTokenResponse(jwtService.generateToken(userDetails))
         } else {
-            throw RefreshTokenException("Refresh token is not valid: $refreshToken")
+            throw RefreshTokenException("Invalid refresh token '$refreshToken'")
         }
     }
 
@@ -61,7 +61,7 @@ class TokenService(
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     fun saveRefreshToken(username: String, refreshToken: String?) {
         val user: User = userRepository.findByUsername(username)
-            .orElseThrow { EntityNotFoundException("User not found with username: $username") }
+            .orElseThrow { EntityNotFoundException("User with username '$username' not found ") }
         userRepository.save(user.copy(refreshToken = refreshToken))
     }
 
@@ -72,7 +72,7 @@ class TokenService(
     fun deleteRefreshToken(username: String) {
         val user: User = userRepository
             .findByUsername(username)
-            .orElseThrow { UsernameNotFoundException("User not found with username: $username") }
+            .orElseThrow { UsernameNotFoundException("User with username '$username' not found ") }
         userRepository.save(user.copy(refreshToken = null))
     }
 }

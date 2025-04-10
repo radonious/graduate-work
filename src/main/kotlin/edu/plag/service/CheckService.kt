@@ -31,24 +31,41 @@ class CheckService(
     suspend fun checkSnippet(userCode: String, settings: CheckSettings, userFile: FileInfo? = null): CheckResults {
         val userFileInfo = userFile ?: FileInfo.fromSnippet(userCode)
 
+        // Обнаруженные подозрительные файлы
         val suspectsLexical = ArrayList<LexicalPair>()
         val suspectsSyntax = ArrayList<SyntaxPair>()
 
         var checksCounter = 0
         val startTime = System.nanoTime()
 
-        fileService.getAllFiles().forEach {
-            // TODO: (PRIORITY) продумать настройки и учесть их
+        // TODO: (PRIORITY) продумать настройки и учесть их.
+        //  Выводить ошибку на фронте, если и лексический и синтаксический виды анализа выключены
+        fileService.getAllSavedFiles().forEach {
             val dbFileInfo = FileInfo.fromPath(it)
-            if (!isAcceptableSize(userFileInfo.lines, dbFileInfo.lines)) return@forEach
+
+            // Минимальный размер файлов для проверки
+            if (userFileInfo.lines < settings.minFileLength || dbFileInfo.lines < settings.minFileLength) return@forEach
+            // Приемлимо ли отличие в размере сравниваемых файлов
+            if (!isAcceptableSize(userFileInfo.lines, dbFileInfo.lines, settings.maxFileLengthDiffRate)) return@forEach
+
             val dbCode = it.readText()
             ++checksCounter
 
-            val resultLexical = lexicalAnalyzer.analyze(userCode, dbCode) // Лексика
-            suspectsLexical.add(LexicalPair(dbFileInfo, resultLexical))
+            // Включен ли лексический анализ (тест)
+            if (settings.lexicalAnalysisEnable) {
+                val resultLexical = lexicalAnalyzer.analyze(userCode, dbCode)
+                // Превышен ли порог плагиата
+                if (resultLexical.finalScore >= settings.lexicalPlagiarismThreshold)
+                    suspectsLexical.add(LexicalPair(dbFileInfo, resultLexical))
+            }
 
-            val resultSyntax = syntaxAnalyzer.analyze(userCode, dbCode)  // Синтаксис
-            suspectsSyntax.add(SyntaxPair(dbFileInfo, resultSyntax))
+            // Включен ли синтаксический анализ (структура)
+            if (settings.syntaxAnalysisEnable) {
+                val resultSyntax = syntaxAnalyzer.analyze(userCode, dbCode)
+                // Превышен ли порог плагиата
+                if (resultSyntax.finalScore >= settings.syntaxPlagiarismThreshold)
+                    suspectsSyntax.add(SyntaxPair(dbFileInfo, resultSyntax))
+            }
         }
 
         val plagiarism = calculatePlagiarism(suspectsLexical, suspectsSyntax)
@@ -124,9 +141,9 @@ class CheckService(
                 !FileUtils.systemEntries.any { entry.name.startsWith(it) || entry.name.contains("/$it") }
     }
 
-    private fun isAcceptableSize(userLines: Int, dbLines: Int): Boolean {
-        val min: Int = (userLines * (1.0 - ACCEPTABLE_LINES_COUNT_DIFF_RATE)).toInt()
-        val max: Int = (userLines * (1.0 + ACCEPTABLE_LINES_COUNT_DIFF_RATE)).toInt()
+    private fun isAcceptableSize(userLines: Int, dbLines: Int, acceptableRate: Double): Boolean {
+        val min: Int = (userLines * (1.0 - acceptableRate)).toInt()
+        val max: Int = (userLines * (1.0 + acceptableRate)).toInt()
         return dbLines in min..max
     }
 

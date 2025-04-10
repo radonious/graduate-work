@@ -15,7 +15,6 @@ services:
 
   spring-app:
     container_name: app_container
-    image: plag:1.0
     build:
       context: .
       dockerfile: Dockerfile

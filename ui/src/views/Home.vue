@@ -83,14 +83,13 @@ import {authService} from "../service/authService.js";
 
 // TODO: удалить после поддержки настрйек
 const settingsStub = {
-  "minFileSize": 10,
+  "minFileLength": 10,
+  "maxFileLengthDiffRate": 0.25,
   "lexicalPlagiarismThreshold": 0.2,
   "lexicalAnalysisEnable": true,
   "syntaxPlagiarismThreshold": 0.2,
   "syntaxAnalysisEnable": true,
-  "checkComments": false,
-  "preset": "NORMAL",
-  "saveFileInDatabase": false,
+  "saveSourcesIntoDatabase": false,
 };
 
 const extensions = [

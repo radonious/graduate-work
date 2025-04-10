@@ -68,7 +68,7 @@ data class SecurityConfig(
     fun authenticationManager(
         authenticationConfiguration: AuthenticationConfiguration
     ): AuthenticationManager {
-        return authenticationConfiguration.getAuthenticationManager()
+        return authenticationConfiguration.authenticationManager
     }
 
     @Bean

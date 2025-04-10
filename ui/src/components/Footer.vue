@@ -7,9 +7,9 @@
       <div class="footer-left-part" >
         <div class="footer-text">{{ $t("footer.copyright") }}</div>
         <div class="links">
-          <router-link to="/help">{{ $t("footer.help") }}</router-link>
-          <router-link to="/privacy">{{ $t("footer.privacy") }}</router-link>
-          <router-link to="/terms">{{ $t("footer.terms") }}</router-link>
+          <router-link to="/about">{{ $t("footer.help") }}</router-link>
+          <router-link to="/about">{{ $t("footer.privacy") }}</router-link>
+          <router-link to="/about">{{ $t("footer.terms") }}</router-link>
         </div>
       </div>
 

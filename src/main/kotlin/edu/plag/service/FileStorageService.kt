@@ -18,14 +18,6 @@ class FileStorageService {
         Files.createDirectories(FileUtils.getUploadPath())
     }
 
-    companion object {
-
-    }
-
-    private fun createFileNamePrefix(): String {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss-SSS"))
-    }
-
     fun saveSnippet(code: String): String {
         val fileName = "${createFileNamePrefix()}_snippet.java"
         val uploadsDir = FileUtils.getUploadPath()  // Получаем путь к папке uploads
@@ -35,10 +27,10 @@ class FileStorageService {
     }
 
     fun saveFile(file: MultipartFile): String {
-        val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("Файл не имеет имени")
+        val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("File name is invalid")
 
         if (!originalFilename.endsWith(".java", ignoreCase = true)) {
-            throw InvalidFileTypeException("Допускаются только файлы с расширением .java")
+            throw InvalidFileTypeException("Only .java files are allowed")
         }
 
         val fileName = "${createFileNamePrefix()}_${originalFilename}"
@@ -49,10 +41,10 @@ class FileStorageService {
     }
 
     fun saveArchive(file: MultipartFile): String {
-        val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("Файл не имеет имени")
+        val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("File name is invalid")
 
         if (!originalFilename.endsWith(".zip", ignoreCase = true)) {
-            throw InvalidFileTypeException("Допускаются только .zip архивы")
+            throw InvalidFileTypeException("Only .zip archives are allowed")
         }
 
         val archivePath = FileUtils.getUploadPath().resolve(originalFilename)
@@ -103,9 +95,14 @@ class FileStorageService {
 
         if (countJavaFiles == 0) {
             Files.deleteIfExists(extractDir)
-            throw InvalidFileTypeException("В проекте не содержится ни одного файла .java")
+            throw InvalidFileTypeException("There is no .java files in the project")
         }
 
         return extractDir.name
     }
+
+    private fun createFileNamePrefix(): String {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss-SSS"))
+    }
+
 }

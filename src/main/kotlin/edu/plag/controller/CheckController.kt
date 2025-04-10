@@ -29,34 +29,40 @@ class CheckController(
     @Operation(summary = "Check code snippet for plagiarism")
     @PostMapping(value = ["/snippet"], consumes = ["multipart/form-data"])
     fun checkCodeSnippet(
-        @RequestPart("snippet") @Valid snippet: String, @RequestPart("settings") @Valid settings: CheckSettings
+        @RequestPart("snippet") @Valid snippet: String,
+        @RequestPart("settings") @Valid settings: CheckSettings
     ): ResponseEntity<CheckResults> = runBlocking {
+
         val res = checkService.checkSnippet(snippet, settings)
-        if (settings.saveFileInDatabase) fileStorageService.saveSnippet(snippet)
+        if (settings.saveSourcesIntoDatabase) fileStorageService.saveSnippet(snippet)
         return@runBlocking ResponseEntity.ok(res)
     }
 
     @Operation(summary = "Check file for plagiarism")
     @PostMapping(value = ["/file"], consumes = ["multipart/form-data"])
     fun checkFile(
-        @RequestPart("file") file: MultipartFile, @RequestPart("settings") @Valid settings: CheckSettings
+        @RequestPart("file") file: MultipartFile,
+        @RequestPart("settings") @Valid settings: CheckSettings
     ): ResponseEntity<CheckResults> = runBlocking {
+
         val res = checkService.checkFile(file, settings)
-        if (settings.saveFileInDatabase) fileStorageService.saveFile(file)
+        if (settings.saveSourcesIntoDatabase) fileStorageService.saveFile(file)
         return@runBlocking ResponseEntity.ok(res)
     }
 
     @Operation(summary = "Check project for plagiarism")
     @PostMapping(value = ["/archive"], consumes = ["multipart/form-data"])
     fun checkArchive(
-        @RequestPart("file") file: MultipartFile, @RequestPart("settings") @Valid settings: CheckSettings
+        @RequestPart("file") file: MultipartFile,
+        @RequestPart("settings") @Valid settings: CheckSettings
     ): ResponseEntity<CheckResults> = runBlocking {
-        val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("Файл не имеет имени")
+
+        val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("File name is invalid")
         if (!originalFilename.endsWith(".zip", ignoreCase = true)) {
-            throw InvalidFileTypeException("Допускаются только .zip архивы")
+            throw InvalidFileTypeException("Only .zip archives are allowed")
         }
         val res = checkService.checkArchive(file, settings)
-        if (settings.saveFileInDatabase) fileStorageService.saveArchive(file)
+        if (settings.saveSourcesIntoDatabase) fileStorageService.saveArchive(file)
         return@runBlocking ResponseEntity.ok(res)
     }
 }

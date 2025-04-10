@@ -45,7 +45,10 @@ buildNumber.properties
 ## Gradle
 bin/
 build/
+gradle/
 .gradle
+gradlew
+gradlew.bat
 .gradletasknamecache
 gradle-app.setting
 !gradle-wrapper.jar
@@ -57,6 +60,7 @@ out/
 *.iml
 *.ipr
 *.iws
+amplicode.xml
 
 ## Eclipse
 .settings/
