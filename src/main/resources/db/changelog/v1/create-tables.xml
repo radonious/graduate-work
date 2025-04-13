@@ -27,72 +27,7 @@
         </createTable>
     </changeSet>
 
-    <!-- 2. Таблица проектов -->
-    <changeSet id="002-create-projects" author="Alex">
-        <createTable tableName="projects">
-            <column name="id" type="SERIAL">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="user_id" type="INT">
-                <constraints nullable="false" foreignKeyName="fk_projects_users" references="users(id)" deleteCascade="true"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <!-- 3. Таблица файлов -->
-    <changeSet id="003-create-files" author="Alex">
-        <createTable tableName="files">
-            <column name="id" type="SERIAL">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="project_id" type="INT">
-                <constraints foreignKeyName="fk_files_projects" references="projects(id)"/>
-            </column>
-            <column name="filename" type="VARCHAR(255)"/>
-            <column name="path" type="TEXT">
-                <constraints unique="true" nullable="false"/>
-            </column>
-            <column name="line_count" type="INT"/>
-        </createTable>
-    </changeSet>
-
-    <!-- 4. Таблица запросов на проверку -->
-    <changeSet id="004-plagiarism-requests" author="Alex">
-        <createTable tableName="requests">
-            <column name="id" type="SERIAL">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="user_id" type="INT">
-                <constraints nullable="false" foreignKeyName="fk_requests_users" references="users(id)" deleteCascade="true"/>
-            </column>
-            <column name="file_id" type="INT">
-                <constraints foreignKeyName="fk_requests_files" references="files(id)"/>
-            </column>
-            <column name="project_id" type="INT">
-                <constraints foreignKeyName="fk_requests_projects" references="projects(id)"/>
-            </column>
-        </createTable>
-    </changeSet>
-
     <!-- 5. Таблица результатов проверки -->
-    <changeSet id="005-plagiarism-results" author="Alex">
-        <createTable tableName="results">
-            <column name="id" type="SERIAL">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="request_id" type="INT">
-                <constraints nullable="false" foreignKeyName="fk_results_requests" references="requests(id)" deleteCascade="true"/>
-            </column>
-            <column name="most_similar_file_id" type="INT">
-                <constraints foreignKeyName="fk_results_files" references="files(id)"/>
-            </column>
-            <column name="most_similar_project_id" type="INT">
-                <constraints foreignKeyName="fk_results_projects" references="projects(id)"/>
-            </column>
-            <column name="final_score" type="DOUBLE PRECISION"/>
-            <column name="analyzed_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
-        </createTable>
-    </changeSet>
+    <!--  TODO  -->
 
 </databaseChangeLog>

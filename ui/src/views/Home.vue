@@ -206,7 +206,7 @@ export default {
       // Эталонные значения для профилей
       profilesSettings: {
         speed: {
-          minFileLength: 50,
+          minFileLength: 20,
           maxFileLengthDiffRate: 0.3,
           lexicalAnalysisEnable: true,
           syntaxAnalysisEnable: false,
@@ -214,7 +214,7 @@ export default {
           syntaxPlagiarismThreshold: 0.5,
         },
         quality: {
-          minFileLength: 10,
+          minFileLength: 5,
           maxFileLengthDiffRate: 0.2,
           lexicalAnalysisEnable: true,
           syntaxAnalysisEnable: true,

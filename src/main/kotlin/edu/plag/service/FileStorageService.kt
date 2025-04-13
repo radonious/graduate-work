@@ -104,5 +104,4 @@ class FileStorageService {
     private fun createFileNamePrefix(): String {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss-SSS"))
     }
-
 }

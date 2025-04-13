@@ -6,6 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
+import kotlin.io.path.isDirectory
 
 @Component
 class FileUtils {
@@ -30,6 +31,12 @@ class FileUtils {
 
         fun getUploadPath(): Path = Paths.get("uploads").toAbsolutePath().normalize().also {
             Files.createDirectories(it)
+        }
+
+        fun getAllSavedFiles(): List<Path> {
+            return Files.walk(getUploadPath())
+                .filter { !it.isDirectory() }
+                .toList()
         }
 
         fun unzip(zipFile: File, destDir: File) {

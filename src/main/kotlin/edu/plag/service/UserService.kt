@@ -96,6 +96,4 @@ class UserService(
         }
         userRepository.deleteById(id)
     }
-
-
 }

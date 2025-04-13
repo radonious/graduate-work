@@ -15,7 +15,6 @@ import kotlin.text.Charsets.UTF_8
 
 @Service
 class CheckService(
-    private val fileService: FileService,
     private val lexicalAnalyzer: LexicalAnalyzer,
     private val syntaxAnalyzer: SyntaxAnalyzer,
 ) {
@@ -24,8 +23,6 @@ class CheckService(
         // TODO: (AFTER ALL) продумать коэффициенты после тестов
         private const val SYNTAX_ANALYSIS_WEIGHT = 0.40
         private const val LEXICAL_ANALYSIS_WEIGHT = 0.60
-
-        private const val ACCEPTABLE_LINES_COUNT_DIFF_RATE = 0.25
     }
 
     suspend fun checkSnippet(userCode: String, settings: CheckSettings, userFile: FileInfo? = null): CheckResults {
@@ -40,7 +37,7 @@ class CheckService(
 
         // TODO: (PRIORITY) продумать настройки и учесть их.
         //  Выводить ошибку на фронте, если и лексический и синтаксический виды анализа выключены
-        fileService.getAllSavedFiles().forEach {
+        FileUtils.getAllSavedFiles().forEach {
             val dbFileInfo = FileInfo.fromPath(it)
 
             // Минимальный размер файлов для проверки

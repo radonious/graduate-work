@@ -50,7 +50,7 @@ data class SyntaxPair(
 
 /**
  * Результаты лексического анализа для
- * 1 файла пользователя и N файлов из базы
+ * 1 файла пользователя и 1 файла из базы
  */
 data class LexicalAnalyzerResults(
     val userCodeLexemesCount: Int,
@@ -66,7 +66,7 @@ data class LexicalAnalyzerResults(
 
 /**
  * Результаты синтаксического анализа для
- * 1 файла пользователя и N файлов из базы
+ * 1 файла пользователя и 1 файла из базы
  */
 data class SyntaxAnalyzerResults(
     val hasIsomorphism: Boolean,

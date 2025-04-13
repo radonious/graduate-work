@@ -3,7 +3,6 @@ package edu.plag.dto
 import jakarta.validation.constraints.DecimalMax
 import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.Min
-import jakarta.validation.constraints.NotNull
 
 data class CheckSettings(
     @field:Min(1, message = "minFileLength should be 1 line or more")
