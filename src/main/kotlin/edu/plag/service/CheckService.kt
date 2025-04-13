@@ -111,7 +111,7 @@ class CheckService(
         val duration = ((System.nanoTime() - start) / 1_000_000).toInt()
 
         tempFile.delete()
-        return sumResults(results, duration)
+        return sumResults(results, duration, settings)
     }
 
     private fun saveToTempFile(file: MultipartFile): File {
@@ -170,7 +170,7 @@ class CheckService(
         return lexicalScore + syntaxScore
     }
 
-    private fun sumResults(results: List<CheckResults>, duration: Int): CheckResults {
+    private fun sumResults(results: List<CheckResults>, duration: Int, settings: CheckSettings): CheckResults {
         var totalChecks = 0
         var totalAccum = 0.0
         var totalLines = 0L
@@ -184,7 +184,7 @@ class CheckService(
             totalLines += fileInfo.lines
         }
 
-        val common = results.first().common.copy(
+        val common = CommonCheckResults(
             duration = duration,
             checks = totalChecks,
             plagiarism = totalAccum / totalLines,
@@ -194,7 +194,7 @@ class CheckService(
         return CheckResults(
             common = common,
             checks = checks,
-            settings = results.first().settings
+            settings = settings,
         )
     }
 }

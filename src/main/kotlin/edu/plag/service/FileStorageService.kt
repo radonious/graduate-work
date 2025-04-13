@@ -4,15 +4,18 @@ import edu.plag.entity.File
 import edu.plag.exceptions.InvalidFileTypeException
 import edu.plag.repository.FileRepository
 import edu.plag.util.FileUtils
+import edu.plag.util.FileUtils.Companion.systemEntries
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
-import java.io.InputStream
+import java.io.*
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import kotlin.io.path.createDirectories
 
 @Service
@@ -25,7 +28,7 @@ class FileStorageService(
     }
 
     @Transactional
-    fun saveSnippet(code: String): Unit {
+    fun saveSnippet(code: String) {
         val hash = computeHash(code)
         if (fileRepository.findById(hash).isPresent) return
         val fileName = "${createFileNamePrefix()}_snippet.java"
@@ -36,7 +39,7 @@ class FileStorageService(
     }
 
     @Transactional
-    fun saveFile(file: MultipartFile): Unit {
+    fun saveFile(file: MultipartFile) {
         // Проверки
         val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("File name is invalid")
 
@@ -56,67 +59,75 @@ class FileStorageService(
     }
 
     @Transactional
-    fun saveArchive(file: MultipartFile): Unit {
+    fun saveArchive(file: MultipartFile) {
         val originalFilename = file.originalFilename ?: throw InvalidFileTypeException("File name is invalid")
 
         if (!originalFilename.endsWith(".zip", ignoreCase = true)) {
             throw InvalidFileTypeException("Only .zip archives are allowed")
         }
 
-        val archivePath = FileUtils.getUploadPath().resolve(originalFilename)
-        file.transferTo(archivePath.toFile())
+        val archiveFile = FileUtils.getUploadPath().resolve(originalFilename)
+        file.transferTo(archiveFile.toFile())
 
-        val archiveName = archivePath.fileName.toString().removeSuffix(".zip")
+        val archiveName = archiveFile.fileName.toString().removeSuffix(".zip")
         val prefix = "${createFileNamePrefix()}_"
         val folderName = "${prefix}${archiveName}"
         val extractDir = FileUtils.getUploadPath().resolve(folderName)
 
         extractDir.createDirectories()
-        FileUtils.unzip(archivePath.toFile(), extractDir.toFile())
 
-        // Удаление системных файлов и директорий (снизу вверх)
-        extractDir.toFile().walkBottomUp().forEach {
-            if (FileUtils.systemEntries.contains(it.name)) {
-                if (it.isDirectory) {
-                    it.deleteRecursively()
-                } else {
-                    it.delete()
-                }
-            }
-        }
+        val createdDirectories = mutableSetOf<java.io.File>(extractDir.toFile())
+        val savedFiles = mutableSetOf<File>()
 
-        var countJavaFiles = 0
-        val savedFiles = mutableListOf<File>()
-        extractDir.toFile().walk().forEach {
-            if (it.isFile) {
-                if (!it.extension.equals("java", ignoreCase = true)) {
-                    it.delete()
-                } else {
-                    val hash = computeHashInputStream(it.inputStream())
-                    if (fileRepository.findById(hash).isPresent) {
-                        it.delete()
-                        return@forEach
+        ZipInputStream(FileInputStream(archiveFile.toFile())).use { zis ->
+            generateSequence { zis.nextEntry }.forEach { entry ->
+                if (isValidEntry(entry)) {
+                    val outputFile = File(extractDir.toFile(), entry.name)
+
+                    if (entry.isDirectory) {
+                        if (outputFile.mkdirs()) createdDirectories.add(outputFile)
+                    } else {
+                        outputFile.parentFile?.takeUnless { it.exists() }?.let {
+                            it.mkdirs()
+                            createdDirectories.add(it)
+                        }
+
+                        // Чтение байтов ZipEntry
+                        ByteArrayOutputStream().use { baos ->
+                            zis.copyTo(baos)
+                            val bytes = baos.toByteArray()
+                            ByteArrayInputStream(bytes).use { inputStream ->
+                                // Проверка хеша (до сохранения, чтобы не удалять)
+                                val hash = computeHashInputStream(inputStream)
+                                if (fileRepository.findById(hash).isPresent) return@forEach
+                                savedFiles.add(File(hash = hash, name = entry.name.substringAfterLast("/")))
+                            }
+
+                            // Запись в файл
+                            FileOutputStream(outputFile).use { fos ->
+                                fos.write(bytes)
+                            }
+                        }
+
+                        trackParentDirectories(outputFile.parentFile, extractDir.toFile(), createdDirectories)
                     }
-                    // Переименовываем файл, сохраняя структуру папок
-                    val newName = prefix + it.name
-                    val newPath = it.toPath().resolveSibling(newName)
-                    savedFiles.add(File(hash, it.name))
-                    Files.move(it.toPath(), newPath)
-                    countJavaFiles++
                 }
             }
         }
 
+        // Сохраняем хеши
         fileRepository.saveAll(savedFiles)
 
-        // Удаляем пустые директории (снизу вверх)
-        extractDir.toFile().walkBottomUp().forEach {
-            if (it.isDirectory && it.listFiles().isNullOrEmpty()) {
-                it.delete()
+        // Удаляем пустые директории (начиная с самых вложенных)
+        createdDirectories
+            .sortedByDescending { it.path.length }
+            .forEach { dir ->
+                if (dir.isDirectory && dir.listFiles()?.isEmpty() == true) {
+                    dir.deleteRecursively()
+                }
             }
-        }
 
-        Files.deleteIfExists(archivePath)
+        Files.deleteIfExists(archiveFile)
     }
 
     private fun createFileNamePrefix(): String {
@@ -140,5 +151,31 @@ class FileStorageService(
             }
         }
         return digest.digest().joinToString("") { "%02x".format(it) }
+    }
+
+    private fun isValidEntry(entry: ZipEntry): Boolean {
+        // Проверка на системные директории
+        val pathSegments = entry.name.split('/')
+        if (pathSegments.any { it in systemEntries }) return false
+
+        // Проверка на .java файл
+        return when {
+            entry.isDirectory -> true // Временно сохраняем директории
+            entry.name.endsWith(".java", ignoreCase = true) -> true
+            else -> false
+        }
+
+    }
+
+    private fun trackParentDirectories(
+        currentDir: java.io.File?,
+        rootDir: java.io.File,
+        directories: MutableSet<java.io.File>
+    ) {
+        var dir = currentDir
+        while (dir != null && dir != rootDir) {
+            directories.add(dir)
+            dir = dir.parentFile
+        }
     }
 }

@@ -26,7 +26,10 @@ class FileUtils {
             ".fseventsd",
             ".VolumeIcon.icns",
             "generated",
-            "test"
+            "generated-src",
+            "test",
+            "build",
+            "uploads",
         )
 
         fun getUploadPath(): Path = Paths.get("uploads").toAbsolutePath().normalize().also {
@@ -37,24 +40,6 @@ class FileUtils {
             return Files.walk(getUploadPath())
                 .filter { !it.isDirectory() }
                 .toList()
-        }
-
-        fun unzip(zipFile: File, destDir: File) {
-            ZipFile(zipFile).use { zip ->
-                zip.entries().asSequence().forEach { entry ->
-                    val file = File(destDir, entry.name)
-                    if (entry.isDirectory) {
-                        file.mkdirs()
-                    } else {
-                        file.parentFile.mkdirs()
-                        zip.getInputStream(entry).use { input ->
-                            file.outputStream().use { output ->
-                                input.copyTo(output)
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }

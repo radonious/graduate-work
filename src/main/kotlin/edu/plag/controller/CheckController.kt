@@ -61,6 +61,7 @@ class CheckController(
         if (!originalFilename.endsWith(".zip", ignoreCase = true)) {
             throw InvalidFileTypeException("Only .zip archives are allowed")
         }
+
         val res = checkService.checkArchive(file, settings)
         if (settings.saveSourcesIntoDatabase) fileStorageService.saveArchive(file)
         return@runBlocking ResponseEntity.ok(res)
