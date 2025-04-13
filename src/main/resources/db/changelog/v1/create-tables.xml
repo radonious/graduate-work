@@ -27,7 +27,20 @@
         </createTable>
     </changeSet>
 
-    <!-- 5. Таблица результатов проверки -->
+    <!-- 2. Таблица результатов проверки -->
     <!--  TODO  -->
+
+    <!-- 3. Таблица хешей созраненных файлов -->
+    <changeSet id="002-file-hashes" author="Alex">
+        <createTable tableName="files">
+            <!-- Primary Key: SHA-256 hash (64 hex chars) -->
+            <column name="file_hash" type="CHAR(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="file_name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
 </databaseChangeLog>
