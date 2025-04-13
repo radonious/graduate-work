@@ -75,6 +75,15 @@
             "syntaxPlagiarismThreshold": "Syntax plagiarism threshold",
             "syntaxAnalysisEnable": "Syntax analysis",
             "saveSourcesIntoDatabase": "Save files on server"
+        },
+        "tooltip": {
+            "profile": "Preferred scan profile",
+            "minFileLength": "Files from the database with a shorter length will not be used during verification",
+            "maxFileLengthDiffRate": "Files from the database with a greater difference in size will not be used during verification",
+            "lexicalAnalysisEnable": "Responsible for comparing program text. Does not take into account the structure",
+            "lexicalPlagiarismThreshold": "Exceeding the value is considered plagiarism and is displayed in the results",
+            "syntaxAnalysisEnable": "Responsible for comparing program structure. Does not take text into account",
+            "syntaxPlagiarismThreshold": "Exceeding the value is considered plagiarism and is displayed in the results"
         }
     }
 }

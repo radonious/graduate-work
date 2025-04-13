@@ -65,9 +65,10 @@
       </button>
 
       <div>
-        <!-- Настройка профиля как btn-group -->
+        <!-- Настройка профиля -->
         <div class="mb-3">
           <label class="form-label">{{ $t("home.settings.profile.title") }}</label>
+          <Tooltip :text="$t('home.tooltip.profile')" />
           <div class="btn-group" role="group" aria-label="Profile selection">
             <input type="radio"
                    class="btn-check"
@@ -105,6 +106,7 @@
           <label for="minFileLength" class="form-label mt-2">
             {{ $t("home.settings.minFileLength") }}
           </label>
+          <Tooltip class="mt-2" :text="$t('home.tooltip.minFileLength')" />
           <input type="number" id="minFileLength" class="form-control settings-counter" v-model.number="minFileLength">
         </div>
 
@@ -112,36 +114,41 @@
           <label for="maxFileLengthDiffRate" class="form-label">
             {{ $t("home.settings.maxFileLengthDiffRate") }} ({{ (maxFileLengthDiffRate * 100).toFixed(0) }}%)
           </label>
+          <Tooltip :text="$t('home.tooltip.maxFileLengthDiffRate')" />
           <input type="range" id="maxFileLengthDiffRate" class="form-range settings-slider" v-model.number="maxFileLengthDiffRate"
                  min="0" max="1" step="0.01">
         </div>
 
-        <div class="mb-3 form-check">
+        <div class="mb-3 gap-2 d-flex form-check">
           <input type="checkbox" id="lexicalAnalysisEnable" class="form-check-input" v-model="lexicalAnalysisEnable">
           <label for="lexicalAnalysisEnable" class="form-check-label">
             {{ $t("home.settings.lexicalAnalysisEnable") }}
           </label>
+          <Tooltip :text="$t('home.tooltip.lexicalAnalysisEnable')" />
         </div>
 
         <div class="mb-3">
           <label for="lexicalPlagiarismThreshold" class="form-label">
             {{ $t("home.settings.lexicalPlagiarismThreshold") }} ({{ (lexicalPlagiarismThreshold * 100).toFixed(0) }}%)
           </label>
+          <Tooltip :text="$t('home.tooltip.lexicalPlagiarismThreshold')" />
           <input type="range" id="lexicalPlagiarismThreshold" class="form-range settings-slider"
                  v-model.number="lexicalPlagiarismThreshold" min="0" max="1" step="0.01">
         </div>
 
-        <div class="mb-3 form-check">
+        <div class="mb-3 gap-2 d-flex form-check">
           <input type="checkbox" id="syntaxAnalysisEnable" class="form-check-input" v-model="syntaxAnalysisEnable">
           <label for="syntaxAnalysisEnable" class="form-check-label">
             {{ $t("home.settings.syntaxAnalysisEnable") }}
           </label>
+          <Tooltip :text="$t('home.tooltip.syntaxAnalysisEnable')" />
         </div>
 
         <div class="mb-3">
           <label for="syntaxPlagiarismThreshold" class="form-label">
             {{ $t("home.settings.syntaxPlagiarismThreshold") }} ({{ (syntaxPlagiarismThreshold * 100).toFixed(0) }}%)
           </label>
+          <Tooltip :text="$t('home.tooltip.syntaxPlagiarismThreshold')" />
           <input type="range" id="syntaxPlagiarismThreshold" class="form-range settings-slider"
                  v-model.number="syntaxPlagiarismThreshold" min="0" max="1" step="0.01">
         </div>
@@ -171,6 +178,7 @@ import {autocompletion} from '@codemirror/autocomplete'
 import {lintGutter} from '@codemirror/lint'
 import {API_BASE_URL} from "../../config.js";
 import {authService} from "../service/authService.js";
+import Tooltip from '../components/Tooltip.vue'
 
 const extensions = [
   basicSetup,
@@ -180,9 +188,11 @@ const extensions = [
   EditorView.lineWrapping
 ];
 
-
 export default {
   name: "Home",
+  components: {
+    Tooltip
+  },
   data() {
     return {
       // Части страницы

@@ -75,6 +75,15 @@
             "syntaxPlagiarismThreshold": "语法抄袭阈值",
             "syntaxAnalysisEnable": "语法分析",
             "saveSourcesIntoDatabase": "保存文件至数据库"
+        },
+        "tooltip": {
+            "profile": "首选扫描配置文件",
+            "minFileLength": "数据库中长度较短的文件将不会在验证过程中使用",
+            "maxFileLengthDiffRate": "数据库中大小差异较大的文件将不会在验证过程中使用",
+            "lexicalAnalysisEnable": "负责比较程序文本。不考虑结构",
+            "lexicalPlagiarismThreshold": "超过该值将被视为抄袭，并显示在结果中",
+            "syntaxAnalysisEnable": "负责比较程序结构。不考虑文本",
+            "syntaxPlagiarismThreshold": "超过该值将被视为抄袭，并显示在结果中"
         }
     }
 }
