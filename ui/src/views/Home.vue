@@ -68,7 +68,7 @@
         <!-- Настройка профиля -->
         <div class="mb-3">
           <label class="form-label">{{ $t("home.settings.profile.title") }}</label>
-          <Tooltip :text="$t('home.tooltip.profile')" />
+          <Tooltip :text="$t('home.tooltip.profile')"/>
           <div class="btn-group" role="group" aria-label="Profile selection">
             <input type="radio"
                    class="btn-check"
@@ -88,7 +88,9 @@
                    v-model="profile"
                    @change="applyProfile"
                    autocomplete="off">
-            <label class="btn btn-outline-primary" for="profileQuality">{{ $t("home.settings.profile.quality") }}</label>
+            <label class="btn btn-outline-primary" for="profileQuality">{{
+                $t("home.settings.profile.quality")
+              }}</label>
 
             <input type="radio"
                    class="btn-check"
@@ -106,16 +108,16 @@
           <label for="minFileLength" class="form-label mt-2">
             {{ $t("home.settings.minFileLength") }}
           </label>
-          <Tooltip class="mt-2" :text="$t('home.tooltip.minFileLength')" />
+          <Tooltip class="mt-2" :text="$t('home.tooltip.minFileLength')"/>
           <input type="number" id="minFileLength" class="form-control settings-counter" v-model.number="minFileLength">
         </div>
 
         <div class="mb-3 d-flex col-md-9">
-          <label for="maxFileLengthDiffRate" class="form-label">
-            {{ $t("home.settings.maxFileLengthDiffRate") }} ({{ (maxFileLengthDiffRate * 100).toFixed(0) }}%)
-          </label>
-          <Tooltip :text="$t('home.tooltip.maxFileLengthDiffRate')" />
-          <input type="range" id="maxFileLengthDiffRate" class="form-range settings-slider" v-model.number="maxFileLengthDiffRate"
+          <label for="maxFileLengthDiffRate" class="form-label">{{ $t("home.settings.maxFileLengthDiffRate") }}</label>
+          <label class="percentage-text">({{ (maxFileLengthDiffRate * 100).toFixed(0) }}%)</label>
+          <Tooltip :text="$t('home.tooltip.maxFileLengthDiffRate')"/>
+          <input type="range" id="maxFileLengthDiffRate" class="form-range settings-slider"
+                 v-model.number="maxFileLengthDiffRate"
                  min="0" max="1" step="0.01">
         </div>
 
@@ -124,14 +126,13 @@
           <label for="lexicalAnalysisEnable" class="form-check-label">
             {{ $t("home.settings.lexicalAnalysisEnable") }}
           </label>
-          <Tooltip :text="$t('home.tooltip.lexicalAnalysisEnable')" />
+          <Tooltip :text="$t('home.tooltip.lexicalAnalysisEnable')"/>
         </div>
 
         <div class="mb-3">
-          <label for="lexicalPlagiarismThreshold" class="form-label">
-            {{ $t("home.settings.lexicalPlagiarismThreshold") }} ({{ (lexicalPlagiarismThreshold * 100).toFixed(0) }}%)
-          </label>
-          <Tooltip :text="$t('home.tooltip.lexicalPlagiarismThreshold')" />
+          <label for="lexicalPlagiarismThreshold" class="form-label">{{ $t("home.settings.lexicalPlagiarismThreshold") }}</label>
+          <label class="percentage-text">({{ (lexicalPlagiarismThreshold * 100).toFixed(0) }}%)</label>
+          <Tooltip :text="$t('home.tooltip.lexicalPlagiarismThreshold')"/>
           <input type="range" id="lexicalPlagiarismThreshold" class="form-range settings-slider"
                  v-model.number="lexicalPlagiarismThreshold" min="0" max="1" step="0.01">
         </div>
@@ -141,14 +142,13 @@
           <label for="syntaxAnalysisEnable" class="form-check-label">
             {{ $t("home.settings.syntaxAnalysisEnable") }}
           </label>
-          <Tooltip :text="$t('home.tooltip.syntaxAnalysisEnable')" />
+          <Tooltip :text="$t('home.tooltip.syntaxAnalysisEnable')"/>
         </div>
 
         <div class="mb-3">
-          <label for="syntaxPlagiarismThreshold" class="form-label">
-            {{ $t("home.settings.syntaxPlagiarismThreshold") }} ({{ (syntaxPlagiarismThreshold * 100).toFixed(0) }}%)
-          </label>
-          <Tooltip :text="$t('home.tooltip.syntaxPlagiarismThreshold')" />
+          <label for="syntaxPlagiarismThreshold" class="form-label">{{ $t("home.settings.syntaxPlagiarismThreshold") }}</label>
+          <label class="percentage-text">({{ (syntaxPlagiarismThreshold * 100).toFixed(0) }}%)</label>
+          <Tooltip :text="$t('home.tooltip.syntaxPlagiarismThreshold')"/>
           <input type="range" id="syntaxPlagiarismThreshold" class="form-range settings-slider"
                  v-model.number="syntaxPlagiarismThreshold" min="0" max="1" step="0.01">
         </div>
@@ -163,9 +163,63 @@
       </div>
     </div>
 
-    <!-- TODO: Временный вывод, пока нет окна результата -->
-    <div class="row">
-      <textarea id="res" rows="25"/>
+    <!-- Модальное окно с результатами -->
+    <div v-if="showModal" class="modal" @click.self="showModal = false">
+      <div class="modal-content">
+        <span class="close" @click="showModal = false">&times;</span>
+
+        <h3>Результат проверки</h3>
+
+        <div v-if="isLoading">
+          <span v-if="isLoading" class="spinner-border spinner-border-sm"></span>
+          Идёт проверка...
+        </div>
+
+        <div v-else-if="error" class="error-message">
+          Ошибка: {{ error }}
+        </div>
+
+        <div v-else class="result-content">
+          <div class="result-item ">
+            <span class="label">Дата: </span>
+            <span class="value">{{ result.common.date }}</span>
+          </div>
+          <div class="result-item">
+            <span class="label">Время: </span>
+            <span class="value">{{ result.common.time }}</span>
+          </div>
+          <div class="result-item">
+            <span class="label">Длительность: </span>
+            <span class="value">{{ result.common.duration }}</span>
+            <span class="label">мс </span>
+          </div>
+          <div class="result-item">
+            <span class="label">Количетсво сравнений: </span>
+            <span class="value">{{ result.common.checks }}</span>
+          </div>
+          <br>
+          <div class="result-item">
+            <span class="label">Процент уникальности: </span>
+            <span class="value">{{ result.common.unique * 100 }}%</span>
+          </div>
+          <div class="result-item">
+            <span class="label">Процент плагиата: </span>
+            <span class="value">{{ result.common.plagiarism * 100 }}%</span>
+          </div>
+          <br>
+
+          <div class="result-item">
+            <h5>Подозрительные файлы</h5>
+          </div>
+          <br>
+
+          <div class="result-item">
+            <h5>Полный ответ от сервера</h5>
+            <pre>{{ result }}</pre>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -204,6 +258,8 @@ export default {
       selectedFile: null,
       isDragging: false,
       fileError: null,
+      result: null,
+      showModal: false,
       // Значения настроек
       minFileLength: 0,
       maxFileLengthDiffRate: 0.5,
@@ -268,7 +324,10 @@ export default {
   },
   methods: {
     async handleCheck() {
-      this.isLoading = true;
+      this.isLoading = true
+      this.showModal = true
+      this.result = null
+      this.errorMessage = null
 
       try {
         const settings = {
@@ -321,11 +380,11 @@ export default {
           return;
         }
 
-        const data = await response.json();
-        console.log(data)
+        this.result = await response.json();
+        console.log(this.result)
 
         const res = document.getElementById("res");
-        res.textContent = JSON.stringify(data, null, 2)
+        res.textContent = JSON.stringify(this.result, null, 2)
 
       } catch (error) {
         this.errorMessage = error.message;
@@ -556,7 +615,11 @@ export default {
 }
 
 .settings-counter {
-  width: 100px;
+  width: 80px;
+}
+
+.settings-counter::-webkit-inner-spin-button{
+  opacity: 1;
 }
 
 .form-switch {
@@ -574,5 +637,69 @@ export default {
 
 .form-label {
   margin-right: 8px;
+}
+
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  right: 15px;
+  top: 5px;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: black;
+}
+
+.error-message {
+  color: red;
+  padding: 10px;
+}
+
+.result-content {
+  margin-top: 15px;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: #f5f5f5;
+  padding: 13px;
+  border-radius: 4px;
+  max-height: 200px;
+}
+
+.result-item {
+  margin: 10px;
+}
+
+.percentage-text {
+  min-width: 55px;
 }
 </style>

@@ -29,7 +29,7 @@ body {
   width: 75%;
   max-width: 1440px;
   min-width: 700px;
-  user-select: none;
+  user-select: auto;
 }
 
 a,
