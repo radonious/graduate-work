@@ -8,29 +8,26 @@
     <!-- 1. Таблица пользователей -->
     <changeSet id="001-create-users" author="Alex">
         <createTable tableName="users">
-            <column name="id" type="INT" autoIncrement="true">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="VARCHAR(255)">
                 <constraints unique="true" nullable="false"/>
             </column>
-            <column name="password" type="VARCHAR(255)">
+            <column name="password_hash" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="role" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="refresh_token" type="VARCHAR(255)">
+            <column name="refresh_token" type="TEXT">
                 <constraints nullable="true"/>
             </column>
             <column name="registered_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
         </createTable>
     </changeSet>
 
-    <!-- 2. Таблица результатов проверки -->
-    <!--  TODO  -->
-
-    <!-- 3. Таблица хешей созраненных файлов -->
+    <!-- 2. Таблица хешей сохраненных файлов -->
     <changeSet id="002-file-hashes" author="Alex">
         <createTable tableName="files">
             <!-- Primary Key: SHA-256 hash (64 hex chars) -->
@@ -41,6 +38,48 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+    <!-- 3. Таблица результатов проверки -->
+    <changeSet id="003-check-results" author="Alex">
+        <createTable tableName="results">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_check_result_user"
+                             referencedTableName="users"
+                             referencedColumnNames="id"
+                             deleteCascade="true"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="plagiarism" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uniqueness" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lexical_enabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="syntax_enabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="results" indexName="idx_check_result_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="results" indexName="idx_check_result_timestamp">
+            <column name="timestamp"/>
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog>

@@ -1,11 +1,11 @@
 package edu.plag.util
 
 import org.springframework.stereotype.Component
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.zip.ZipFile
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.io.path.isDirectory
 
 @Component
@@ -34,6 +34,10 @@ class FileUtils {
 
         fun getUploadPath(): Path = Paths.get("uploads").toAbsolutePath().normalize().also {
             Files.createDirectories(it)
+        }
+
+        fun createFileNamePrefix(): String {
+            return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss-SSS"))
         }
 
         fun getAllSavedFiles(): List<Path> {

@@ -1,109 +1,138 @@
 {
-    "navbar": {
-        "home": "Home",
-        "history": "History",
-        "about": "About",
-        "profile": "Profile",
-        "login": "Log In",
-        "logout": "Log Out"
+  "navbar": {
+    "home": "Home",
+    "history": "History",
+    "about": "About",
+    "profile": "Profile",
+    "login": "Log In",
+    "logout": "Log Out"
+  },
+  "footer": {
+    "copyright": "© A.M. Ermolaev, 2025",
+    "help": "Help",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "login": {
+    "title": "Log In",
+    "username": "Username",
+    "password": "Password",
+    "hide": "Hide",
+    "show": "Show",
+    "submit": "Log In",
+    "success": "Login successful!",
+    "signup_text": "Don’t have an account?",
+    "signup": "Sign Up",
+    "error": "Invalid user credentials",
+    "error_server": "Server connection error"
+  },
+  "register": {
+    "title": "Registration",
+    "username": "Username",
+    "password": "Password",
+    "show": "Show",
+    "hide": "Hide",
+    "confirm_password": "Confirm Password",
+    "submit": "Create a new account",
+    "login_text": "Already have an account?",
+    "login": "Log In",
+    "passwords_not_match": "Passwords don’t match",
+    "error": "A user with this name already exists",
+    "error_server": "Server connection error"
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "Username",
+    "role": "Role",
+    "id": "User ID",
+    "logout": "Logout",
+    "delete": "Delete account"
+  },
+  "home": {
+    "title": "Anti-Plagiarism",
+    "snippet": {
+      "comment": "// Put your code here"
     },
-    "footer": {
-        "copyright": "© A.M. Ermolaev, 2025",
-        "help": "Help",
-        "privacy": "Privacy",
-        "terms": "Terms"
+    "files": {
+      "drag": "Drag & Drop",
+      "supported": "Supports only .java and .zip files",
+      "manual": "Load files manually",
+      "choose": "Choose file",
+      "nothing": "Nothing loaded",
+      "loaded": "Loaded file",
+      "size": "Size"
     },
-    "login": {
-        "title": "Log In",
-        "username": "Username",
-        "password": "Password",
-        "hide": "Hide",
-        "show": "Show",
-        "submit": "Log In",
-        "success": "Login successful!",
-        "signup_text": "Don’t have an account?",
-        "signup": "Sign Up",
-        "error": "Invalid user credentials",
-        "error_server": "Server connection error"
-    },
-    "register": {
-        "title": "Registration",
-        "username": "Username",
-        "password": "Password",
-        "show": "Show",
-        "hide": "Hide",
-        "confirm_password": "Confirm Password",
-        "submit": "Create a new account",
-        "login_text": "Already have an account?",
-        "login": "Log In",
-        "passwords_not_match": "Passwords don’t match",
-        "error": "A user with this name already exists",
-        "error_server": "Server connection error"
-    },
-    "profile": {
+    "settings": {
+      "load": "Load files",
+      "check": "Check",
+      "progress": "In progress...",
+      "profile": {
         "title": "Profile",
-        "username": "Username",
-        "role": "Role",
-        "id": "User ID",
-        "logout": "Logout",
-        "delete": "Delete account"
+        "speed": "Speed",
+        "quality": "Quality",
+        "custom": "Custom"
+      },
+      "minFileLength": "Minimum file length",
+      "maxFileLengthDiffRate": "Maximum file difference",
+      "lexicalPlagiarismThreshold": "Lexical plagiarism threshold",
+      "lexicalAnalysisEnable": "Lexical analysis",
+      "syntaxPlagiarismThreshold": "Syntax plagiarism threshold",
+      "syntaxAnalysisEnable": "Syntax analysis",
+      "saveSourcesIntoDatabase": "Save files on server"
     },
-    "home": {
-        "title": "Anti-Plagiarism",
-        "snippet": {
-            "comment": "// Put your code here"
+    "tooltip": {
+      "profile": "Preferred scan profile",
+      "minFileLength": "Files from the database with a shorter length will not be used during verification",
+      "maxFileLengthDiffRate": "Files from the database with a greater difference in size will not be used during verification",
+      "lexicalAnalysisEnable": "Responsible for comparing program text. Does not take into account the structure",
+      "lexicalPlagiarismThreshold": "Exceeding the value is considered plagiarism and is displayed in the results",
+      "syntaxAnalysisEnable": "Responsible for comparing program structure. Does not take text into account",
+      "syntaxPlagiarismThreshold": "Exceeding the value is considered plagiarism and is displayed in the results"
+    },
+    "results": {
+      "title": "Check Results",
+      "date": "Date",
+      "time": "Time",
+      "duration": "Duration",
+      "ms": "ms",
+      "checks": "Number of Comparisons",
+      "unique": "Uniqueness Percentage",
+      "plagiarism": "Plagiarism Percentage",
+      "table": {
+        "title": "Detected borrowings",
+        "file_db": "Compared with",
+        "lines": "Length",
+        "analysis": "Analyzer type",
+        "analysis_type": {
+          "lexical": "Lexical",
+          "syntax": "Syntax",
+          "both": "Both"
         },
-        "files": {
-            "drag": "Drag & Drop",
-            "supported": "Supports only .java and .zip files",
-            "manual": "Load files manually",
-            "choose": "Choose file",
-            "nothing": "Nothing loaded",
-            "loaded": "Loaded file",
-            "size": "Size"
-        },
-        "settings": {
-            "load": "Load files",
-            "check": "Check",
-            "progress": "In progress...",
-            "profile": {
-                "title": "Profile",
-                "speed": "Speed",
-                "quality": "Quality",
-                "custom": "Custom"
-            },
-            "minFileLength": "Minimum file length",
-            "maxFileLengthDiffRate": "Maximum file difference",
-            "lexicalPlagiarismThreshold": "Lexical plagiarism threshold",
-            "lexicalAnalysisEnable": "Lexical analysis",
-            "syntaxPlagiarismThreshold": "Syntax plagiarism threshold",
-            "syntaxAnalysisEnable": "Syntax analysis",
-            "saveSourcesIntoDatabase": "Save files on server"
-        },
-        "tooltip": {
-            "profile": "Preferred scan profile",
-            "minFileLength": "Files from the database with a shorter length will not be used during verification",
-            "maxFileLengthDiffRate": "Files from the database with a greater difference in size will not be used during verification",
-            "lexicalAnalysisEnable": "Responsible for comparing program text. Does not take into account the structure",
-            "lexicalPlagiarismThreshold": "Exceeding the value is considered plagiarism and is displayed in the results",
-            "syntaxAnalysisEnable": "Responsible for comparing program structure. Does not take text into account",
-            "syntaxPlagiarismThreshold": "Exceeding the value is considered plagiarism and is displayed in the results"
-        },
-        "results": {
-            "title": "Check Results",
-            "date": "Date",
-            "time": "Time",
-            "duration": "Duration",
-            "ms": "ms",
-            "checks": "Number of Comparisons",
-            "unique": "Uniqueness Percentage",
-            "plagiarism": "Plagiarism Percentage",
-            "table": {
-                "title": "Detected borrowings",
-                "file_db": "Compared with",
-                "lines": "Length",
-                "plagiarism": "Match"
-            }
-        }
+        "plagiarism": "Match"
+      }
     }
+  },
+  "history": {
+    "title": "Check History",
+    "date": "Date",
+    "time": "Time",
+    "type": "Type",
+    "plagiarism": "Plagiarism",
+    "uniqueness": "Uniqueness",
+    "lexical": "Lexical",
+    "syntax": "Syntax"
+  },
+  "about": {
+    "title": "About the Project",
+    "desc_title": "Description",
+    "desc_text": "Project overview: what it does, who it's for, and what problems it solves.",
+    "tech_title": "Technologies",
+    "tech_text": "Description of the technologies used.",
+    "arch_title": "Architecture",
+    "arch_text": "Project structure overview, layers, use of coroutines, data processing approaches.",
+    "settings_title": "Settings",
+    "settings_text": "How to use the interface, available check parameters, what each setting does, etc.",
+    "other_title": "Other",
+    "other_text": "Future plans, improvement ideas, or acknowledgments."
+  }
 }

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.Resource
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.resource.PathResourceResolver
@@ -23,6 +24,14 @@ class WebConfig : WebMvcConfigurer {
 
     override fun configureMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
         converters.add(MappingJackson2HttpMessageConverter())
+    }
+
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**")
+            .allowedOrigins("http://localhost:5173")
+            .allowedMethods("*")
+            .allowedHeaders("*")
+            .allowCredentials(true)
     }
 
     /**

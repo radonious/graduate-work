@@ -1,6 +1,7 @@
 package edu.plag.dto
 
 import edu.plag.exceptions.InvalidFileTypeException
+import edu.plag.util.FileUtils.Companion.createFileNamePrefix
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Path
 import kotlin.io.path.name
@@ -16,8 +17,8 @@ data class FileInfo(
         fun fromPath(file: Path): FileInfo {
             val content = file.readText()
             val lines = content.lineSequence().count()
-            val prefix = file.name.substringBefore('_')
-            val filename = file.name.substringAfter('_')
+            val prefix = file.name.substringBeforeLast('_')
+            val filename = file.name.substringAfterLast('_')
             return FileInfo(
                 filename = filename,
                 prefix = prefix,
@@ -29,7 +30,7 @@ data class FileInfo(
             val lines = code.lines().size
             return FileInfo(
                 filename = "snippet",
-                prefix = null,
+                prefix = createFileNamePrefix(),
                 lines = lines,
             )
         }
@@ -40,7 +41,7 @@ data class FileInfo(
             val lines = content.lines().size
             return FileInfo(
                 filename = filename,
-                prefix = null,
+                prefix = createFileNamePrefix(),
                 lines = lines,
             )
         }

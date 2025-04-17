@@ -2,12 +2,17 @@ package edu.plag.controller
 
 import edu.plag.dto.CheckResults
 import edu.plag.dto.CheckSettings
+import edu.plag.enums.CheckType
 import edu.plag.exceptions.InvalidFileTypeException
+import edu.plag.service.AuthService
 import edu.plag.service.CheckService
 import edu.plag.service.FileStorageService
+import edu.plag.service.ResultService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,16 +21,16 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
-// TODO: (LATER) добавить cron для очистки одинаковых файлов в базе (или проверять/блокировать их добавление)
-//  как вариант - проверять количество схожих файлов, если их более 50%, то удалять старый проект и оставлять новый (проблема с поиском проекта в базе, хотя имена должны быстро сравниваться)
-//  для ускорения поиска можно в папку с проектом добавлять .txt с перечислением всех его файлов, так значительно быстрее
 @RestController
 @RequestMapping("/api/v1/check")
 @Validated
 class CheckController(
     private val fileStorageService: FileStorageService,
     private val checkService: CheckService,
+    private val authService: AuthService,
+    private val resultService: ResultService
 ) {
+
     @Operation(summary = "Check code snippet for plagiarism")
     @PostMapping(value = ["/snippet"], consumes = ["multipart/form-data"])
     fun checkCodeSnippet(
@@ -34,7 +39,9 @@ class CheckController(
     ): ResponseEntity<CheckResults> = runBlocking {
 
         val res = checkService.checkSnippet(snippet, settings)
-        if (settings.saveSourcesIntoDatabase) fileStorageService.saveSnippet(snippet)
+        val userId = authService.getAuthenticatedUserId()
+        resultService.saveResults(userId, res, CheckType.SNIPPET)
+        if (settings.saveSourcesIntoDatabase) withContext(Dispatchers.IO) { fileStorageService.saveSnippet(snippet) }
         return@runBlocking ResponseEntity.ok(res)
     }
 
@@ -46,7 +53,9 @@ class CheckController(
     ): ResponseEntity<CheckResults> = runBlocking {
 
         val res = checkService.checkFile(file, settings)
-        if (settings.saveSourcesIntoDatabase) fileStorageService.saveFile(file)
+        val userId = authService.getAuthenticatedUserId()
+        resultService.saveResults(userId, res, CheckType.FILE)
+        if (settings.saveSourcesIntoDatabase) withContext(Dispatchers.IO) { fileStorageService.saveFile(file) }
         return@runBlocking ResponseEntity.ok(res)
     }
 
@@ -63,7 +72,9 @@ class CheckController(
         }
 
         val res = checkService.checkArchive(file, settings)
-        if (settings.saveSourcesIntoDatabase) fileStorageService.saveArchive(file)
+        val userId = authService.getAuthenticatedUserId()
+        resultService.saveResults(userId, res, CheckType.ARCHIVE)
+        if (settings.saveSourcesIntoDatabase) withContext(Dispatchers.IO) { fileStorageService.saveArchive(file) }
         return@runBlocking ResponseEntity.ok(res)
     }
 }

@@ -4,6 +4,7 @@ import edu.plag.entity.File
 import edu.plag.exceptions.InvalidFileTypeException
 import edu.plag.repository.FileRepository
 import edu.plag.util.FileUtils
+import edu.plag.util.FileUtils.Companion.createFileNamePrefix
 import edu.plag.util.FileUtils.Companion.systemEntries
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,8 +13,6 @@ import java.io.*
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.io.path.createDirectories
@@ -81,37 +80,38 @@ class FileStorageService(
 
         ZipInputStream(FileInputStream(archiveFile.toFile())).use { zis ->
             generateSequence { zis.nextEntry }.forEach { entry ->
-                if (isValidEntry(entry)) {
-                    val outputFile = File(extractDir.toFile(), entry.name)
+                if (!isValidEntry(entry)) return@forEach
 
-                    if (entry.isDirectory) {
-                        if (outputFile.mkdirs()) createdDirectories.add(outputFile)
-                    } else {
-                        outputFile.parentFile?.takeUnless { it.exists() }?.let {
-                            it.mkdirs()
-                            createdDirectories.add(it)
-                        }
+                val outputFile = File(extractDir.toFile(), entry.name)
 
-                        // Чтение байтов ZipEntry
-                        ByteArrayOutputStream().use { baos ->
-                            zis.copyTo(baos)
-                            val bytes = baos.toByteArray()
-                            ByteArrayInputStream(bytes).use { inputStream ->
-                                // Проверка хеша (до сохранения, чтобы не удалять)
-                                val hash = computeHashInputStream(inputStream)
-                                if (fileRepository.findById(hash).isPresent) return@forEach
-                                savedFiles.add(File(hash = hash, name = entry.name.substringAfterLast("/")))
-                            }
-
-                            // Запись в файл
-                            FileOutputStream(outputFile).use { fos ->
-                                fos.write(bytes)
-                            }
-                        }
-
-                        trackParentDirectories(outputFile.parentFile, extractDir.toFile(), createdDirectories)
+                if (entry.isDirectory) {
+                    if (outputFile.mkdirs()) createdDirectories.add(outputFile)
+                } else {
+                    outputFile.parentFile?.takeUnless { it.exists() }?.let {
+                        it.mkdirs()
+                        createdDirectories.add(it)
                     }
+
+                    // Чтение байтов ZipEntry
+                    ByteArrayOutputStream().use { baos ->
+                        zis.copyTo(baos)
+                        val bytes = baos.toByteArray()
+                        ByteArrayInputStream(bytes).use { inputStream ->
+                            // Проверка хеша (до сохранения, чтобы не удалять)
+                            val hash = computeHashInputStream(inputStream)
+                            if (fileRepository.findById(hash).isPresent) return@forEach
+                            savedFiles.add(File(hash = hash, name = entry.name.substringAfterLast("/")))
+                        }
+
+                        // Запись в файл
+                        FileOutputStream(outputFile).use { fos ->
+                            fos.write(bytes)
+                        }
+                    }
+
+                    trackParentDirectories(outputFile.parentFile, extractDir.toFile(), createdDirectories)
                 }
+
             }
         }
 
@@ -130,9 +130,7 @@ class FileStorageService(
         Files.deleteIfExists(archiveFile)
     }
 
-    private fun createFileNamePrefix(): String {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss-SSS"))
-    }
+
 
     private fun computeHash(content: String): String {
         val digest = MessageDigest.getInstance("SHA-256")

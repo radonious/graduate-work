@@ -2,7 +2,7 @@
   <div class="container col-md-9">
     <div class="row justify-content-center">
       <div class="col-md-9">
-        <h3 class="profile-title text-center">{{ $t("profile.title") }}</h3>
+        <p class="profile-title text-center">{{ $t("profile.title") }}</p>
         <div class="card-body">
           <div class="mb-3">
             <label class="form-label">{{ $t("profile.username") }}:</label>

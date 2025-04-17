@@ -10,15 +10,16 @@ data class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique = true)
     val username: String,
 
-    @Column(nullable = false)
+    @Column(name = "password_hash", nullable = false)
     val password: String,
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "role", nullable = false)
     val role: UserRole,
 
+    @Column(name = "refresh_token")
     val refreshToken: String? = null,
 )

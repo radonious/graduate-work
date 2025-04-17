@@ -1,7 +1,7 @@
 package edu.plag.enums
 
 /**
- * Enum для выбора роли пользователя.
+ * Enum для определения роли пользователя.
  */
 enum class UserRole {
     ADMIN,

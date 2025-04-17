@@ -8,6 +8,8 @@ import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.io.path.readText
@@ -38,7 +40,7 @@ class CheckService(
         FileUtils.getAllSavedFiles().forEach {
             val dbFileInfo = FileInfo.fromPath(it)
 
-            // Минимальный размер файлов для проверки
+            // Пройден ли минимальный размер файла для проверки
             if (userFileInfo.lines < settings.minFileLength || dbFileInfo.lines < settings.minFileLength) return@forEach
             // Приемлимо ли отличие в размере сравниваемых файлов
             if (!isAcceptableSize(userFileInfo.lines, dbFileInfo.lines, settings.maxFileLengthDiffRate)) return@forEach
@@ -46,7 +48,7 @@ class CheckService(
             val dbCode = it.readText()
             ++checksCounter
 
-            // Включен ли лексический анализ (тест)
+            // Включен ли лексический анализ (текст)
             if (settings.lexicalAnalysisEnable) {
                 val resultLexical = lexicalAnalyzer.analyze(userCode, dbCode)
                 // Превышен ли порог плагиата
@@ -95,17 +97,33 @@ class CheckService(
 
     suspend fun checkArchive(file: MultipartFile, settings: CheckSettings): CheckResults {
         val tempFile = saveToTempFile(file)
+        val prefix = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss-SSS"))
 
         val start = System.nanoTime()
         val results = coroutineScope {
             ZipFile(tempFile).use { zip ->
                 zip.entries().toList()
-                    .filter { isValidJavaFile(it) } // Оставляем только нужные файлы
+                    .filter { isValidJavaFile(it) }
                     .map { entry ->
-                        async(Dispatchers.Default) { processEntry(zip, entry, settings) }
-                    }.awaitAll() // Ждём выполнения всех задач
+                        async(Dispatchers.Default) {
+                            val content = withContext(Dispatchers.IO) {
+                                zip.getInputStream(entry).bufferedReader().use { it.readText() }
+                            }
+
+                            val fileInfo = FileInfo(
+                                filename = entry.name,
+                                prefix = prefix,
+                                lines = content.lines().size
+                            )
+
+                            withContext(Dispatchers.Default) {
+                                checkSnippet(content, settings, fileInfo)
+                            }
+                        }
+                    }.awaitAll()
             }
         }
+
         val duration = ((System.nanoTime() - start) / 1_000_000).toInt()
 
         tempFile.delete()
@@ -116,18 +134,6 @@ class CheckService(
         val tempFile = kotlin.io.path.createTempFile(suffix = ".zip").toFile()
         file.inputStream.use { input -> tempFile.outputStream().use { input.copyTo(it) } }
         return tempFile
-    }
-
-    private suspend fun processEntry(zip: ZipFile, entry: ZipEntry, settings: CheckSettings): CheckResults {
-        return withContext(Dispatchers.IO) {
-            val content = zip.getInputStream(entry).bufferedReader().use { it.readText() }
-            val fileInfo = FileInfo(
-                filename = entry.name,
-                prefix = null,
-                lines = content.lines().size
-            )
-            checkSnippet(content, settings, fileInfo)
-        }
     }
 
     private fun isValidJavaFile(entry: ZipEntry): Boolean {

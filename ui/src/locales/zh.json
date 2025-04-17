@@ -1,109 +1,138 @@
 {
-    "navbar": {
-        "home": "首页",
-        "history": "历史",
-        "about": "关于项目",
-        "profile": "侧面像",
-        "login": "登录",
-        "logout": "注销"
+  "navbar": {
+    "home": "首页",
+    "history": "历史",
+    "about": "关于项目",
+    "profile": "侧面像",
+    "login": "登录",
+    "logout": "注销"
+  },
+  "footer": {
+    "copyright": "© A.M. Ermolaev, 2025",
+    "help": "帮助",
+    "privacy": "隐私",
+    "terms": "条款"
+  },
+  "login": {
+    "title": "登录",
+    "username": "用户名",
+    "password": "密码",
+    "hide": "隐藏",
+    "show": "显示",
+    "submit": "提交",
+    "success": "登录成功!",
+    "signup_text": "还没有帐户？",
+    "signup": "创建个账户",
+    "error": "用户凭证不正确",
+    "error_server": "服务器连接错误"
+  },
+  "register": {
+    "title": "登记",
+    "username": "用户名",
+    "password": "密码",
+    "hide": "隐藏",
+    "show": "显示",
+    "confirm_password": "确认您的密码",
+    "submit": "注册账户",
+    "login_text": "已经有帐户？",
+    "login": "提交",
+    "passwords_not_match": "密码不匹配",
+    "error": "同名用户已存在",
+    "error_server": "服务器连接错误"
+  },
+  "profile": {
+    "title": "用户资料",
+    "username": "用户名",
+    "role": "角色",
+    "id": "用户身份",
+    "logout": "注销",
+    "delete": "删除帐户"
+  },
+  "home": {
+    "title": "反剽窃",
+    "snippet": {
+      "comment": "// 你的代码在这里"
     },
-    "footer": {
-        "copyright": "© A.M. Ermolaev, 2025",
-        "help": "帮助",
-        "privacy": "隐私",
-        "terms": "条款"
+    "files": {
+      "drag": "拖放",
+      "supported": "仅支持 .java 和 .zip 文件",
+      "manual": "手动加载文件",
+      "choose": "选择文件",
+      "nothing": "没有加载任何内容",
+      "loaded": "加载的文件",
+      "size": "尺寸"
     },
-    "login": {
-        "title": "登录",
-        "username": "用户名",
-        "password": "密码",
-        "hide": "隐藏",
-        "show": "显示",
-        "submit": "提交",
-        "success": "登录成功!",
-        "signup_text": "还没有帐户？",
-        "signup": "创建个账户",
-        "error": "用户凭证不正确",
-        "error_server": "服务器连接错误"
+    "settings": {
+      "load": "加载文件",
+      "check": "查看",
+      "progress": "进行中...",
+      "profile": {
+        "title": "检查个人资料",
+        "speed": "速度",
+        "quality": "质量",
+        "custom": "自定义"
+      },
+      "minFileLength": "最小文件长度",
+      "maxFileLengthDiffRate": "最大文件差异",
+      "lexicalPlagiarismThreshold": "词汇抄袭阈值",
+      "lexicalAnalysisEnable": "词汇分析",
+      "syntaxPlagiarismThreshold": "语法抄袭阈值",
+      "syntaxAnalysisEnable": "语法分析",
+      "saveSourcesIntoDatabase": "保存文件至数据库"
     },
-    "register": {
-        "title": "登记",
-        "username": "用户名",
-        "password": "密码",
-        "hide": "隐藏",
-        "show": "显示",
-        "confirm_password": "确认您的密码",
-        "submit": "注册账户",
-        "login_text": "已经有帐户？",
-        "login": "提交",
-        "passwords_not_match": "密码不匹配",
-        "error": "同名用户已存在",
-        "error_server": "服务器连接错误"
+    "tooltip": {
+      "profile": "首选扫描配置文件",
+      "minFileLength": "数据库中长度较短的文件将不会在验证过程中使用",
+      "maxFileLengthDiffRate": "数据库中大小差异较大的文件将不会在验证过程中使用",
+      "lexicalAnalysisEnable": "负责比较程序文本。不考虑结构",
+      "lexicalPlagiarismThreshold": "超过该值将被视为抄袭，并显示在结果中",
+      "syntaxAnalysisEnable": "负责比较程序结构。不考虑文本",
+      "syntaxPlagiarismThreshold": "超过该值将被视为抄袭，并显示在结果中"
     },
-    "profile": {
-        "title": "用户资料",
-        "username": "用户名",
-        "role": "角色",
-        "id": "用户身份",
-        "logout": "注销",
-        "delete": "删除帐户"
-    },
-    "home": {
-        "title": "反剽窃",
-        "snippet": {
-            "comment": "// 你的代码在这里"
+    "results": {
+      "title": "检查结果",
+      "date": "日期",
+      "time": "时间",
+      "duration": "期间",
+      "ms": "毫秒",
+      "checks": "比较次数",
+      "unique": "独特性百分比",
+      "plagiarism": "抄袭率",
+      "table": {
+        "title": "发现抄袭",
+        "file_db": "与相比",
+        "lines": "文件行数",
+        "analysis": "分析仪类型",
+        "analysis_type": {
+          "lexical": "词法分析器",
+          "syntax": "语法分析器",
+          "both": "两个都"
         },
-        "files": {
-            "drag": "拖放",
-            "supported": "仅支持 .java 和 .zip 文件",
-            "manual": "手动加载文件",
-            "choose": "选择文件",
-            "nothing": "没有加载任何内容",
-            "loaded": "加载的文件",
-            "size": "尺寸"
-        },
-        "settings": {
-            "load": "加载文件",
-            "check": "查看",
-            "progress": "进行中...",
-            "profile": {
-                "title": "检查个人资料",
-                "speed": "速度",
-                "quality": "质量",
-                "custom": "自定义"
-            },
-            "minFileLength": "最小文件长度",
-            "maxFileLengthDiffRate": "最大文件差异",
-            "lexicalPlagiarismThreshold": "词汇抄袭阈值",
-            "lexicalAnalysisEnable": "词汇分析",
-            "syntaxPlagiarismThreshold": "语法抄袭阈值",
-            "syntaxAnalysisEnable": "语法分析",
-            "saveSourcesIntoDatabase": "保存文件至数据库"
-        },
-        "tooltip": {
-            "profile": "首选扫描配置文件",
-            "minFileLength": "数据库中长度较短的文件将不会在验证过程中使用",
-            "maxFileLengthDiffRate": "数据库中大小差异较大的文件将不会在验证过程中使用",
-            "lexicalAnalysisEnable": "负责比较程序文本。不考虑结构",
-            "lexicalPlagiarismThreshold": "超过该值将被视为抄袭，并显示在结果中",
-            "syntaxAnalysisEnable": "负责比较程序结构。不考虑文本",
-            "syntaxPlagiarismThreshold": "超过该值将被视为抄袭，并显示在结果中"
-        },
-        "results": {
-            "title": "检查结果",
-            "date": "日期",
-            "time": "时间",
-            "duration": "期间",
-            "ms": "毫秒",
-            "checks": "比较次数",
-            "unique": "独特性百分比",
-            "plagiarism": "抄袭率",
-            "table": {
-                "title": "发现抄袭",
-                "file_db": "与相比",
-                "lines": "行数",
-                "plagiarism": "匹配率"
-            }
-        }
+        "plagiarism": "匹配率"
+      }
     }
+  },
+  "history": {
+    "title": "我的支票历史记录",
+    "date": "日期",
+    "time": "时间",
+    "type": "类型",
+    "plagiarism": "抄袭率",
+    "uniqueness": "原创率",
+    "lexical": "词汇分析",
+    "syntax": "语法分析"
+  },
+  "about": {
+    "title": "关于项目",
+    "desc_title": "项目简介",
+    "desc_text": "项目描述：它的作用是什么、目标客户是谁、它解决了什么问题",
+    "tech_title": "使用技术",
+    "tech_text": "所用技术描述",
+    "arch_title": "架构设计",
+    "arch_text": "项目结构、分层设计、协程使用与数据处理方式。",
+    "settings_title": "设置说明",
+    "settings_text": "如何使用界面、可用检测参数及每项设置的作用。",
+    "other_title": "其他内容",
+    "other_text": "未来计划、改进想法或致谢信息。"
+  }
 }

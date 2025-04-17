@@ -118,7 +118,7 @@
           <Tooltip :text="$t('home.tooltip.maxFileLengthDiffRate')"/>
           <input type="range" id="maxFileLengthDiffRate" class="form-range settings-slider"
                  v-model.number="maxFileLengthDiffRate"
-                 min="0" max="1" step="0.01">
+                 min="0.01" max="1" step="0.01">
         </div>
 
         <div class="mb-3 gap-2 d-flex form-check">
@@ -136,7 +136,7 @@
           <label class="percentage-text">({{ (lexicalPlagiarismThreshold * 100).toFixed(0) }}%)</label>
           <Tooltip :text="$t('home.tooltip.lexicalPlagiarismThreshold')"/>
           <input type="range" id="lexicalPlagiarismThreshold" class="form-range settings-slider"
-                 v-model.number="lexicalPlagiarismThreshold" min="0" max="1" step="0.01">
+                 v-model.number="lexicalPlagiarismThreshold" min="0.01" max="1" step="0.01">
         </div>
 
         <div class="mb-3 gap-2 d-flex form-check">
@@ -154,7 +154,7 @@
           <label class="percentage-text">({{ (syntaxPlagiarismThreshold * 100).toFixed(0) }}%)</label>
           <Tooltip :text="$t('home.tooltip.syntaxPlagiarismThreshold')"/>
           <input type="range" id="syntaxPlagiarismThreshold" class="form-range settings-slider"
-                 v-model.number="syntaxPlagiarismThreshold" min="0" max="1" step="0.01">
+                 v-model.number="syntaxPlagiarismThreshold" min="0.01" max="1" step="0.01">
         </div>
 
         <div class="mb-3 form-check form-switch">
@@ -215,6 +215,7 @@
               <tr>
                 <th>{{ $t("home.results.table.file_db") }}</th>
                 <th>{{ $t("home.results.table.lines") }}</th>
+                <th>{{ $t("home.results.table.analysis") }}</th>
                 <th>{{ $t("home.results.table.plagiarism") }}</th>
               </tr>
               </thead>
@@ -222,6 +223,7 @@
               <tr v-for="file in susFiles" :key="file.filename">
                 <td class="col-filename" :title="file.filename">{{ file.filename }}</td>
                 <td>{{ file.lines }}</td>
+                <td>{{ file.type }}</td>
                 <td>{{ (file.plagiarism * 100).toFixed(1) }} %</td>
               </tr>
               </tbody>
@@ -397,6 +399,8 @@ export default {
 
         console.log(this.result)
 
+      } catch (error) {
+        this.errorMessage = error.message
       } finally {
         this.isLoading = false;
       }
@@ -405,27 +409,40 @@ export default {
     getSortedSuspiciousFiles(data) {
       const list = data.checks.flatMap(check => {
         const lexical = (check.filesSuspectedByLexicalAnalyzer || []).map(f => ({
+          type: this.$t("home.results.table.analysis_type.lexical"),
           filename: f.file.filename,
           plagiarism: f.results.finalScore,
-          lines: f.file.lines
+          lines: f.file.lines,
+          prefix: f.file.prefix
         }));
         const syntax = (check.filesSuspectedBySyntaxAnalyzer || []).map(f => ({
+          type: this.$t("home.results.table.analysis_type.syntax"),
           filename: f.file.filename,
           plagiarism: f.results.finalScore,
-          lines: f.file.lines
+          lines: f.file.lines,
+          prefix: f.file.prefix
         }));
         return [...lexical, ...syntax];
       });
 
-      // Сортируем: сначала по убыванию plagiarism, затем по убыванию lines
-      list.sort((a, b) => {
+      const mergedMap = list.reduce((map, entry) => {
+        const key = `${entry.prefix}_${entry.filename}`;
+        if (map.has(key)) {
+          const existing = map.get(key);
+          existing.type =  this.$t("home.results.table.analysis_type.both");
+          existing.plagiarism = (existing.plagiarism + entry.plagiarism) / 2;
+        } else {
+          map.set(key, { ...entry });
+        }
+        return map;
+      }, new Map());
+
+      return Array.from(mergedMap.values()).sort((a, b) => {
         if (b.plagiarism !== a.plagiarism) {
           return b.plagiarism - a.plagiarism;
         }
         return b.lines - a.lines;
       });
-
-      return list;
     },
 
     handleFileChange(event) {
@@ -687,7 +704,7 @@ export default {
   padding: 20px;
   border-radius: 8px;
   width: 80%;
-  max-width: 600px;
+  max-width: 700px;
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
