@@ -88,6 +88,22 @@
             "lexicalPlagiarismThreshold": "超过该值将被视为抄袭，并显示在结果中",
             "syntaxAnalysisEnable": "负责比较程序结构。不考虑文本",
             "syntaxPlagiarismThreshold": "超过该值将被视为抄袭，并显示在结果中"
+        },
+        "results": {
+            "title": "检查结果",
+            "date": "日期",
+            "time": "时间",
+            "duration": "期间",
+            "ms": "毫秒",
+            "checks": "比较次数",
+            "unique": "独特性百分比",
+            "plagiarism": "抄袭率",
+            "table": {
+                "title": "发现抄袭",
+                "file_db": "与相比",
+                "lines": "行数",
+                "plagiarism": "匹配率"
+            }
         }
     }
 }

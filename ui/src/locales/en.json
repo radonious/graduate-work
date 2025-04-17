@@ -88,6 +88,22 @@
             "lexicalPlagiarismThreshold": "Exceeding the value is considered plagiarism and is displayed in the results",
             "syntaxAnalysisEnable": "Responsible for comparing program structure. Does not take text into account",
             "syntaxPlagiarismThreshold": "Exceeding the value is considered plagiarism and is displayed in the results"
+        },
+        "results": {
+            "title": "Check Results",
+            "date": "Date",
+            "time": "Time",
+            "duration": "Duration",
+            "ms": "ms",
+            "checks": "Number of Comparisons",
+            "unique": "Uniqueness Percentage",
+            "plagiarism": "Plagiarism Percentage",
+            "table": {
+                "title": "Detected borrowings",
+                "file_db": "Compared with",
+                "lines": "Length",
+                "plagiarism": "Match"
+            }
         }
     }
 }

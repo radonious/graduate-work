@@ -172,50 +172,50 @@
       <div class="modal-content">
         <span class="close" @click="showModal = false">&times;</span>
 
-        <h3 class="text-center">Результаты проверки</h3>
+        <h3 class="text-center">{{ $t("home.results.title") }}</h3>
 
         <div v-if="isLoading">
           <br>
           <span v-if="isLoading" class="spinner-border spinner-border-sm"></span>
-          Идёт проверка...<br><br>
+          {{ $t("home.settings.progress") }}<br><br>
         </div>
 
         <div v-else class="result-content">
           <div class="result-item ">
-            <span class="label">Дата: </span>
+            <span class="label">{{ $t("home.results.date") }}: </span>
             <span class="value">{{ result.common.date }}</span>
           </div>
           <div class="result-item">
-            <span class="label">Время: </span>
+            <span class="label">{{ $t("home.results.time") }}: </span>
             <span class="value">{{ result.common.time.substring(0, result.common.time.indexOf(".")) }}</span>
           </div>
           <div class="result-item">
-            <span class="label">Длительность: </span>
-            <span class="value">{{ result.common.duration }}</span>
-            <span class="label">мс </span>
+            <span class="label">{{ $t("home.results.duration") }}: </span>
+            <span class="value">{{ result.common.duration }} </span>
+            <span class="label">{{ $t("home.results.ms") }} </span>
           </div>
           <div class="result-item">
-            <span class="label">Количетсво сравнений: </span>
+            <span class="label">{{ $t("home.results.checks") }}: </span>
             <span class="value">{{ result.common.checks }}</span>
           </div>
           <br>
           <div class="result-item">
-            <span class="label">Процент уникальности: </span>
+            <span class="label">{{ $t("home.results.unique") }}: </span>
             <span class="value">{{ Math.round(result.common.unique * 10000) / 100 }}%</span>
           </div>
           <div class="result-item">
-            <span class="label">Процент плагиата: </span>
+            <span class="label">{{ $t("home.results.plagiarism") }}: </span>
             <span class="value">{{ Math.round(result.common.plagiarism * 10000) / 100 }}%</span>
           </div>
 
           <div class="result-item table-container" v-if="susFiles.length > 0">
             <table class="suspicious-table">
-              <caption class="table-caption">Подозрительные файлы</caption>
+              <caption class="table-caption">{{ $t("home.results.table.title") }}</caption>
               <thead>
               <tr>
-                <th>Файл из базы</th>
-                <th>Длина</th>
-                <th>Совпадение</th>
+                <th>{{ $t("home.results.table.file_db") }}</th>
+                <th>{{ $t("home.results.table.lines") }}</th>
+                <th>{{ $t("home.results.table.plagiarism") }}</th>
               </tr>
               </thead>
               <tbody>
