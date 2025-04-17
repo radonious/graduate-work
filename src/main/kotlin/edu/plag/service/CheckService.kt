@@ -35,8 +35,6 @@ class CheckService(
         var checksCounter = 0
         val startTime = System.nanoTime()
 
-        // TODO: (PRIORITY) продумать настройки и учесть их.
-        //  Выводить ошибку на фронте, если и лексический и синтаксический виды анализа выключены
         FileUtils.getAllSavedFiles().forEach {
             val dbFileInfo = FileInfo.fromPath(it)
 
@@ -65,7 +63,7 @@ class CheckService(
             }
         }
 
-        val plagiarism = calculatePlagiarism(suspectsLexical, suspectsSyntax)
+        val plagiarism = calculatePlagiarism(suspectsLexical, suspectsSyntax, settings)
 
         val checkDuration = ((System.nanoTime() - startTime) / 1_000_000L).toInt()
 
@@ -146,7 +144,8 @@ class CheckService(
 
     private fun calculatePlagiarism(
         suspectsLexical: ArrayList<LexicalPair>,
-        suspectsSyntax: ArrayList<SyntaxPair>
+        suspectsSyntax: ArrayList<SyntaxPair>,
+        settings: CheckSettings,
     ): Double {
         var lexicalLines = 0
         var lexicalAccum = 0.0
@@ -163,11 +162,17 @@ class CheckService(
         }
 
         val lexicalScore =
-            if (lexicalAccum == 0.0 || lexicalLines == 0) 0.0 else LEXICAL_ANALYSIS_WEIGHT * (lexicalAccum / lexicalLines)
+            if (lexicalAccum == 0.0 || lexicalLines == 0) 0.0 else (lexicalAccum / lexicalLines)
         val syntaxScore =
-            if (syntaxAccum == 0.0 || syntaxLines == 0) 0.0 else SYNTAX_ANALYSIS_WEIGHT * (syntaxAccum / syntaxLines)
+            if (syntaxAccum == 0.0 || syntaxLines == 0) 0.0 else (syntaxAccum / syntaxLines)
 
-        return lexicalScore + syntaxScore
+        return if (!settings.lexicalAnalysisEnable && settings.syntaxAnalysisEnable) {
+            syntaxScore
+        } else if (settings.lexicalAnalysisEnable && !settings.syntaxAnalysisEnable) {
+            lexicalScore
+        } else {
+            lexicalScore * LEXICAL_ANALYSIS_WEIGHT + syntaxScore * SYNTAX_ANALYSIS_WEIGHT
+        }
     }
 
     private fun sumResults(results: List<CheckResults>, duration: Int, settings: CheckSettings): CheckResults {

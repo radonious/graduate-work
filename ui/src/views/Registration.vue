@@ -76,14 +76,14 @@ export default {
         });
 
         if (!response.ok) {
-          this.errorMessage = await response.text();
+          this.errorMessage =  this.$t("register.error");
           return;
         }
 
         this.$router.push('/login');
 
       } catch (error) {
-        this.errorMessage = error.message;
+        this.errorMessage =  this.$t("register.error_server");
       }
     },
     showPassword(fieldId) {

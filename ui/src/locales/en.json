@@ -22,7 +22,9 @@
         "submit": "Log In",
         "success": "Login successful!",
         "signup_text": "Don’t have an account?",
-        "signup": "Sign Up"
+        "signup": "Sign Up",
+        "error": "Invalid user credentials",
+        "error_server": "Server connection error"
     },
     "register": {
         "title": "Registration",
@@ -34,7 +36,9 @@
         "submit": "Create a new account",
         "login_text": "Already have an account?",
         "login": "Log In",
-        "passwords_not_match": "Passwords don’t match"
+        "passwords_not_match": "Passwords don’t match",
+        "error": "A user with this name already exists",
+        "error_server": "Server connection error"
     },
     "profile": {
         "title": "Profile",

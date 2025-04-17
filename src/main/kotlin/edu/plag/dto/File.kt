@@ -16,9 +16,8 @@ data class FileInfo(
         fun fromPath(file: Path): FileInfo {
             val content = file.readText()
             val lines = content.lineSequence().count()
-            val parts = file.name.split('_')
-            val prefix = parts.take(2).joinToString("_")
-            val filename = parts.drop(2).joinToString("_")
+            val prefix = file.name.substringBefore('_')
+            val filename = file.name.substringAfter('_')
             return FileInfo(
                 filename = filename,
                 prefix = prefix,

@@ -130,7 +130,9 @@
         </div>
 
         <div class="mb-3">
-          <label for="lexicalPlagiarismThreshold" class="form-label">{{ $t("home.settings.lexicalPlagiarismThreshold") }}</label>
+          <label for="lexicalPlagiarismThreshold" class="form-label">{{
+              $t("home.settings.lexicalPlagiarismThreshold")
+            }}</label>
           <label class="percentage-text">({{ (lexicalPlagiarismThreshold * 100).toFixed(0) }}%)</label>
           <Tooltip :text="$t('home.tooltip.lexicalPlagiarismThreshold')"/>
           <input type="range" id="lexicalPlagiarismThreshold" class="form-range settings-slider"
@@ -146,7 +148,9 @@
         </div>
 
         <div class="mb-3">
-          <label for="syntaxPlagiarismThreshold" class="form-label">{{ $t("home.settings.syntaxPlagiarismThreshold") }}</label>
+          <label for="syntaxPlagiarismThreshold" class="form-label">{{
+              $t("home.settings.syntaxPlagiarismThreshold")
+            }}</label>
           <label class="percentage-text">({{ (syntaxPlagiarismThreshold * 100).toFixed(0) }}%)</label>
           <Tooltip :text="$t('home.tooltip.syntaxPlagiarismThreshold')"/>
           <input type="range" id="syntaxPlagiarismThreshold" class="form-range settings-slider"
@@ -168,15 +172,12 @@
       <div class="modal-content">
         <span class="close" @click="showModal = false">&times;</span>
 
-        <h3>Результат проверки</h3>
+        <h3 class="text-center">Результаты проверки</h3>
 
         <div v-if="isLoading">
+          <br>
           <span v-if="isLoading" class="spinner-border spinner-border-sm"></span>
-          Идёт проверка...
-        </div>
-
-        <div v-else-if="error" class="error-message">
-          Ошибка: {{ error }}
+          Идёт проверка...<br><br>
         </div>
 
         <div v-else class="result-content">
@@ -186,7 +187,7 @@
           </div>
           <div class="result-item">
             <span class="label">Время: </span>
-            <span class="value">{{ result.common.time }}</span>
+            <span class="value">{{ result.common.time.substring(0, result.common.time.indexOf(".")) }}</span>
           </div>
           <div class="result-item">
             <span class="label">Длительность: </span>
@@ -200,24 +201,33 @@
           <br>
           <div class="result-item">
             <span class="label">Процент уникальности: </span>
-            <span class="value">{{ result.common.unique * 100 }}%</span>
+            <span class="value">{{ Math.round(result.common.unique * 10000) / 100 }}%</span>
           </div>
           <div class="result-item">
             <span class="label">Процент плагиата: </span>
-            <span class="value">{{ result.common.plagiarism * 100 }}%</span>
+            <span class="value">{{ Math.round(result.common.plagiarism * 10000) / 100 }}%</span>
+          </div>
+
+          <div class="result-item table-container" v-if="susFiles.length > 0">
+            <table class="suspicious-table">
+              <caption class="table-caption">Подозрительные файлы</caption>
+              <thead>
+              <tr>
+                <th>Файл из базы</th>
+                <th>Длина</th>
+                <th>Совпадение</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="file in susFiles" :key="file.filename">
+                <td class="col-filename" :title="file.filename">{{ file.filename }}</td>
+                <td>{{ file.lines }}</td>
+                <td>{{ (file.plagiarism * 100).toFixed(1) }} %</td>
+              </tr>
+              </tbody>
+            </table>
           </div>
           <br>
-
-          <div class="result-item">
-            <h5>Подозрительные файлы</h5>
-          </div>
-          <br>
-
-          <div class="result-item">
-            <h5>Полный ответ от сервера</h5>
-            <pre>{{ result }}</pre>
-          </div>
-
         </div>
       </div>
     </div>
@@ -260,6 +270,7 @@ export default {
       fileError: null,
       result: null,
       showModal: false,
+      susFiles: '',
       // Значения настроек
       minFileLength: 0,
       maxFileLengthDiffRate: 0.5,
@@ -328,6 +339,7 @@ export default {
       this.showModal = true
       this.result = null
       this.errorMessage = null
+      this.susFiles = ""
 
       try {
         const settings = {
@@ -381,17 +393,39 @@ export default {
         }
 
         this.result = await response.json();
+        this.susFiles = this.getSortedSuspiciousFiles(this.result)
+
         console.log(this.result)
 
-        const res = document.getElementById("res");
-        res.textContent = JSON.stringify(this.result, null, 2)
-
-      } catch (error) {
-        this.errorMessage = error.message;
-        console.error('Ошибка при проверке: ', error);
       } finally {
         this.isLoading = false;
       }
+    },
+
+    getSortedSuspiciousFiles(data) {
+      const list = data.checks.flatMap(check => {
+        const lexical = (check.filesSuspectedByLexicalAnalyzer || []).map(f => ({
+          filename: f.file.filename,
+          plagiarism: f.results.finalScore,
+          lines: f.file.lines
+        }));
+        const syntax = (check.filesSuspectedBySyntaxAnalyzer || []).map(f => ({
+          filename: f.file.filename,
+          plagiarism: f.results.finalScore,
+          lines: f.file.lines
+        }));
+        return [...lexical, ...syntax];
+      });
+
+      // Сортируем: сначала по убыванию plagiarism, затем по убыванию lines
+      list.sort((a, b) => {
+        if (b.plagiarism !== a.plagiarism) {
+          return b.plagiarism - a.plagiarism;
+        }
+        return b.lines - a.lines;
+      });
+
+      return list;
     },
 
     handleFileChange(event) {
@@ -593,10 +627,6 @@ export default {
   margin: 0;
 }
 
-#res {
-  margin: 25px 0;
-}
-
 .home-check-btn {
   max-width: 200px !important;
 }
@@ -618,7 +648,7 @@ export default {
   width: 80px;
 }
 
-.settings-counter::-webkit-inner-spin-button{
+.settings-counter::-webkit-inner-spin-button {
   opacity: 1;
 }
 
@@ -692,7 +722,7 @@ pre {
   background: #f5f5f5;
   padding: 13px;
   border-radius: 4px;
-  max-height: 200px;
+  max-height: 300px;
 }
 
 .result-item {
@@ -701,5 +731,54 @@ pre {
 
 .percentage-text {
   min-width: 55px;
+}
+
+.modal {
+  padding: 30px;
+}
+
+.suspicious-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.suspicious-table th,
+.suspicious-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.suspicious-table th {
+  position: sticky;
+  top: 0;
+  background: #f5f5f5;
+  z-index: 2;
+}
+
+.suspicious-table .col-filename {
+  text-align: left;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suspicious-table th.col-filename {
+  background-color: #f5f5f5;
+}
+
+.table-container {
+  max-height: 330px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.table-caption {
+  caption-side: top;
+  text-align: center;
+  font-weight: bold;
+  padding: 8px;
+  font-size: 1.1em;
 }
 </style>

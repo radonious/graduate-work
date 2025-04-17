@@ -58,7 +58,7 @@ export default {
                     body: JSON.stringify({ username: this.username, password: this.password })
                 });
                 if (!response.ok) {
-                  this.errorMessage = await response.text();
+                    this.errorMessage = this.$t("login.error");
                     return;
                 }
                 const data = await response.json();
@@ -66,7 +66,7 @@ export default {
                 console.log(authService.getTokens())
                 this.$router.push('/home');
             } catch (error) {
-                this.errorMessage = error.message;
+                this.errorMessage = this.$t("login.error_server");
             }
         },
         showPassword() {

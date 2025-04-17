@@ -22,7 +22,9 @@
         "submit": "提交",
         "success": "登录成功!",
         "signup_text": "还没有帐户？",
-        "signup": "创建个账户"
+        "signup": "创建个账户",
+        "error": "用户凭证不正确",
+        "error_server": "服务器连接错误"
     },
     "register": {
         "title": "登记",
@@ -34,7 +36,9 @@
         "submit": "注册账户",
         "login_text": "已经有帐户？",
         "login": "提交",
-        "passwords_not_match": "密码不匹配"
+        "passwords_not_match": "密码不匹配",
+        "error": "同名用户已存在",
+        "error_server": "服务器连接错误"
     },
     "profile": {
         "title": "用户资料",
