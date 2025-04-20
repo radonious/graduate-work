@@ -30,6 +30,8 @@ repositories {
     mavenCentral()
 }
 
+val mockitoAgent by configurations.creating
+
 dependencies {
     // Starters
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.4.3")
@@ -42,9 +44,12 @@ dependencies {
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.4.3")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.25")
     testImplementation("org.springframework.security:spring-security-test:6.4.3")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.1")
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    mockitoAgent("org.mockito:mockito-core:5.15.2") { isTransitive = false }
 
     // Database
     implementation("org.liquibase:liquibase-core:4.31.1")
@@ -60,7 +65,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
     implementation("org.mapstruct:mapstruct:1.6.3")
     kapt("org.mapstruct:mapstruct-processor:1.6.3")
-    implementation("org.apache.poi:poi-ooxml:5.3.0")
+    implementation("org.apache.poi:poi-ooxml:5.4.0")
     implementation("org.apache.tika:tika-core:2.9.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.1")
@@ -93,11 +98,24 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.withType<Test>().configureEach {
+    // Подключаем agent и отключаем CDS-шаринг
+    jvmArgs(
+        "-javaagent:${mockitoAgent.singleFile.absolutePath}",
+        "-Xshare:off"
+    )
+}
+
+
 tasks.generateGrammarSource {
     arguments = listOf("-visitor", "-no-listener")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
+    dependsOn(tasks.withType<AntlrTask>())
+}
+
+tasks.withType<Test>().configureEach {
     dependsOn(tasks.withType<AntlrTask>())
 }
 

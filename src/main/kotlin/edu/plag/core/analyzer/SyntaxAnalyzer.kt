@@ -4,6 +4,7 @@ import edu.plag.core.parser.AstParser
 import edu.plag.core.parser.GraphParser
 import edu.plag.dto.SyntaxAnalyzerResults
 import org.jgrapht.Graph
+import org.jgrapht.alg.isomorphism.VF2GraphIsomorphismInspector
 import org.jgrapht.alg.isomorphism.VF2SubgraphIsomorphismInspector
 import org.jgrapht.graph.AbstractBaseGraph
 import org.jgrapht.graph.AsSubgraph
@@ -38,6 +39,8 @@ class SyntaxAnalyzer(
         val dbInvariant = calculateGraphInvariant(dbAstGraph)
         val vertices = userAstGraph.vertexSet().toSet()
 
+        if (VF2GraphIsomorphismInspector(dbAstGraph, userAstGraph).isomorphismExists()) return true
+
         return generatePowerSet(vertices, minSize) { subset ->
             val subgraph = createInducedSubgraph(userAstGraph, subset)
             // Если инварианты не совпадают – сразу пропускаем проверку
@@ -56,10 +59,11 @@ class SyntaxAnalyzer(
     }
 
     private fun calculateGraphInvariant(graph: Graph<String, DefaultEdge>): Int {
-        return graph.vertexSet()
+        val res = graph.vertexSet()
             .map { vertex -> graph.inDegreeOf(vertex) + graph.outDegreeOf(vertex) }
             .sorted()
             .hashCode()
+        return res
     }
 
     /**
@@ -116,14 +120,14 @@ class SyntaxAnalyzer(
 
         // 1. Подсчёт разницы по вершинам
         val unmatchedVertices = vertices1.symmetricDifference(vertices2)
-        val vertexEditCost = unmatchedVertices.size * VERTEX_EDIT_COST
+        val vertexEditCost = unmatchedVertices.size * VERTEX_EDIT_COST / 2
 
         // 2. Подсчёт разницы по рёбрам
         val edgePairs1 = graph1.edgeSet().map { e -> graph1.getEdgeSource(e) to graph1.getEdgeTarget(e) }.toSet()
         val edgePairs2 = graph2.edgeSet().map { e -> graph2.getEdgeSource(e) to graph2.getEdgeTarget(e) }.toSet()
 
         val unmatchedEdges = edgePairs1.symmetricDifference(edgePairs2)
-        val edgeEditCost = unmatchedEdges.size * EDGE_EDIT_COST
+        val edgeEditCost = unmatchedEdges.size * EDGE_EDIT_COST / 2
 
         return vertexEditCost + edgeEditCost
     }

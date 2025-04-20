@@ -27,7 +27,7 @@ class LexicalAnalyzer(
      * Наибольшая общая подпоследовательность (LCS).
      * Определяет длину самой длинной подпоследовательности лексем, которая встречается в обоих кодах
      */
-    private fun longestCommonSubsequence(tokens1: List<String>, tokens2: List<String>): Int {
+    fun longestCommonSubsequence(tokens1: List<String>, tokens2: List<String>): Int {
         val dp = Array(tokens1.size + 1) { IntArray(tokens2.size + 1) }
         for (i in 1..tokens1.size) {
             for (j in 1..tokens2.size) {
@@ -41,15 +41,16 @@ class LexicalAnalyzer(
         return dp[tokens1.size][tokens2.size]
     }
 
-    private fun scoreLongestCommonSubsequence(tokens1: List<String>, tokens2: List<String>, result: Int): Double {
-        return result.toDouble() / (max(tokens1.size, tokens2.size))
+    fun scoreLongestCommonSubsequence(tokens1: List<String>, tokens2: List<String>, result: Int): Double {
+        val score = result.toDouble() / (max(tokens1.size, tokens2.size))
+        return if (score.isNaN()) 0.0 else score
     }
 
     /**
      * Расстояние Дамерау-Левенштейна.
      * Количество минимальных операций (вставка, удаление, замена, транспозиция), чтобы превратить одну последовательность лексем в другую
      */
-    private fun damerauLevenshteinDistance(tokens1: List<String>, tokens2: List<String>): Int {
+    fun damerauLevenshteinDistance(tokens1: List<String>, tokens2: List<String>): Int {
         val dp = Array(tokens1.size + 1) { IntArray(tokens2.size + 1) }
         for (i in 0..tokens1.size) dp[i][0] = i
         for (j in 0..tokens2.size) dp[0][j] = j
@@ -68,8 +69,9 @@ class LexicalAnalyzer(
         return dp[tokens1.size][tokens2.size]
     }
 
-    private fun scoreDamerauLevenshteinDistance(tokens1: List<String>, tokens2: List<String>, result: Int): Double {
-        return 1.0 - result.toDouble() / (max(tokens1.size, tokens2.size))
+    fun scoreDamerauLevenshteinDistance(tokens1: List<String>, tokens2: List<String>, result: Int): Double {
+        val score = 1.0 - result.toDouble() / (max(tokens1.size, tokens2.size))
+        return if (score.isNaN()) 0.0 else score
     }
 
     /**
@@ -77,7 +79,7 @@ class LexicalAnalyzer(
      * Показывает, насколько похожи множества лексем двух кодов
      * Отношение размера объединения 2-х множеств к количеству общих элементов 2-х множеств
      */
-    private fun scoreJaccard(tokens1: List<String>, tokens2: List<String>): Double {
+    fun scoreJaccard(tokens1: List<String>, tokens2: List<String>): Double {
         val set1 = tokens1.toSet()
         val set2 = tokens2.toSet()
         val intersection = (set1 intersect set2).size.toDouble()
@@ -86,7 +88,7 @@ class LexicalAnalyzer(
     }
 
 
-    private fun kGrams(tokens: List<String>, k: Int): Set<String> {
+    fun kGrams(tokens: List<String>, k: Int): Set<String> {
         return tokens.windowed(k, 1, partialWindows = false).map { it.joinToString(" ") }.toSet()
     }
 
@@ -95,7 +97,7 @@ class LexicalAnalyzer(
      *  Разбивает код на последовательности длины k (например, 3-граммы).
      *  Проверяет насколько полученные множества идентичны
      */
-    private fun scoreKGrams(tokens1: List<String>, tokens2: List<String>, k: Int): Double {
+    fun scoreKGrams(tokens1: List<String>, tokens2: List<String>, k: Int): Double {
         val grams1 = kGrams(tokens1, k)
         val grams2 = kGrams(tokens2, k)
         val intersection = grams1.intersect(grams2).size.toDouble()
