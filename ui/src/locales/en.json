@@ -125,14 +125,14 @@
   "about": {
     "title": "About the Project",
     "desc_title": "Description",
-    "desc_text": "Project overview: what it does, who it's for, and what problems it solves.",
+    "desc_text": "The project is a web application designed to automatically check Java code for plagiarism. It identifies code similarities both at the textual level (lexical analysis) and structural level (syntactic analysis). The primary goal is to simplify the process of verifying code originality for educational and commercial purposes.",
     "tech_title": "Technologies",
-    "tech_text": "Description of the technologies used.",
+    "tech_text": "The backend is built on Kotlin and Spring Boot, ensuring flexibility and scalability. Security is implemented via Spring Security with JWT authentication and role-based access control. Data is stored in PostgreSQL, and Spring Data JPA streamlines database interactions. Lexical analysis utilizes ANTLR and JavaParser, while syntactic analysis employs graph comparison algorithms. Asynchronous file processing is handled by Kotlin Coroutines, accelerating checks for projects with numerous files. The web interface is developed using Vue.js with Vite for bundling, and navigation is managed via Vue Router.",
     "arch_title": "Architecture",
-    "arch_text": "Project structure overview, layers, use of coroutines, data processing approaches.",
-    "settings_title": "Settings",
-    "settings_text": "How to use the interface, available check parameters, what each setting does, etc.",
-    "other_title": "Other",
-    "other_text": "Future plans, improvement ideas, or acknowledgments."
+    "arch_text": "The project follows a layered architecture: Controllers handle HTTP requests, Services contain analysis logic (lexical/syntactic modules and data filtering), and Repositories manage database interactions. For optimization, each file is processed in a separate coroutine. The maximum upload size is 250 MB, but projects under 5 MB (after removing third-party libraries) are recommended for efficient processing.",
+    "settings_title": "Usage",
+    "settings_text": "The application can be used via GUI or REST API. Key settings include predefined profiles ('Speed', 'Quality', and a custom mode), filters for minimum lines per file and maximum file length difference, a plagiarism threshold to flag copied code, and an option to save projects to the database for future comparisons.",
+    "other_title": "Future Plans",
+    "other_text": "Planned improvements: Optimizing syntactic analysis algorithms for faster processing, adding support for new programming languages, visualizing code matches to highlight plagiarism, and integrating AI for contextual similarity detection."
   }
 }
