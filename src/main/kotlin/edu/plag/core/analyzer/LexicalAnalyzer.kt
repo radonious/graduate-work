@@ -17,9 +17,9 @@ class LexicalAnalyzer(
      * Сумма весов должна быть равна 1
      */
     companion object {
-        private const val LCS_SCORE_WEIGHT = 0.50
+        private const val LCS_SCORE_WEIGHT = 0.45
         private const val DAMERAU_SCORE_WEIGHT = 0.40
-        private const val JACCARD_SCORE_WEIGHT = 0.05
+        private const val JACCARD_SCORE_WEIGHT = 0.10
         private const val K_GRAM_SCORE_WEIGHT = 0.05
     }
 

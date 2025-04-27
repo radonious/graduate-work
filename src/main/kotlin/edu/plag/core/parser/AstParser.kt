@@ -19,10 +19,10 @@ class AstParser {
         val result = parser.parse(code)
 
         return if (result.isSuccessful) {
-            val unit = result.result.get()
-            unit.allComments.clear()
-            unit.imports.clear()
-            unit
+            result.result.get().also {
+                it.allComments.clear()
+                it.imports.clear()
+            }
         } else {
             throw InvalidFileTypeException("Can not parse or validate received file.")
         }

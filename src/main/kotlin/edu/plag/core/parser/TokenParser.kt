@@ -19,22 +19,23 @@ class TokenParser {
         tokenStream.fill() // Заполняем поток токенами
 
         return tokenStream.tokens
-            .filter { it.type != Token.EOF && it.type != JavaLexer.WS  } // Убираем пробелы
+            .filter { it.type !in listOf(JavaLexer.WS, JavaLexer.EOF) }
+            .filter { it.type !in listOf(JavaLexer.LINE_COMMENT, JavaLexer.COMMENT) }
             .map { normalizeToken(it) }
     }
 
     /**
-     * Нормализует вид токена
+     * Нормализует вид токенов
      */
     private fun normalizeToken(token: Token): String {
         return when (token.type) {
-            // TODO: (LATER) подумать что еще заменять при нормализации
-            //  при этом стоит не переборщить с заменами, иначе будет слишком много сохжих элементов
-            //  заменять есть смысл только неинформативные/ненужные конструкции.
-            //  Еще в теории комменты могут багать анализ из-за одинаковых элемнетов "" в списках
-            JavaLexer.LINE_COMMENT, JavaLexer.COMMENT -> "" // Убираем комментарии
-            // JavaLexer.IDENTIFIER -> "VAR" // Нормализуем все идентификаторы
-            JavaLexer.DECIMAL_LITERAL, JavaLexer.FLOAT_LITERAL, JavaLexer.STRING_LITERAL -> "LITERAL" // Нормализуем литералы
+            JavaLexer.IDENTIFIER -> "VAR"
+            JavaLexer.DECIMAL_LITERAL, JavaLexer.HEX_LITERAL, JavaLexer.OCT_LITERAL, JavaLexer.BINARY_LITERAL,
+            JavaLexer.FLOAT_LITERAL, JavaLexer.HEX_FLOAT_LITERAL -> "NUM_LITERAL"
+            JavaLexer.STRING_LITERAL, JavaLexer.CHAR_LITERAL -> "STR_LITERAL"
+            JavaLexer.BOOL_LITERAL -> "BOOL_LITERAL"
+            JavaLexer.NULL_LITERAL -> "NULL_LITERAL"
+
             else -> token.text // Оставляем прочие ключевые слова, операторы и конструкции
         }
     }

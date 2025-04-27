@@ -22,9 +22,8 @@ class CheckService(
 ) {
 
     companion object {
-        // TODO: (AFTER ALL) продумать коэффициенты после тестов
-        private const val SYNTAX_ANALYSIS_WEIGHT = 0.40
-        private const val LEXICAL_ANALYSIS_WEIGHT = 0.60
+        private const val SYNTAX_ANALYSIS_WEIGHT = 0.65
+        private const val LEXICAL_ANALYSIS_WEIGHT = 0.35
     }
 
     suspend fun checkSnippet(userCode: String, settings: CheckSettings, userFile: FileInfo? = null): CheckResults {

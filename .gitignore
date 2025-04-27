@@ -1,4 +1,4 @@
-## Java / Kotlin
+# Java / Kotlin
 .mtj.tmp/
 *.class
 *.jar
@@ -30,7 +30,7 @@ application-secrets.properties
 /logs/
 /tmp/
 
-## Maven
+# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -43,7 +43,7 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
-## Gradle
+# Gradle
 bin/
 build/
 gradle/
@@ -54,12 +54,12 @@ gradlew.bat
 gradle-app.setting
 !gradle-wrapper.jar
 
-## IntelliJ
+# IntelliJ
 .idea/
 .idea_modules/
 amplicode.xml
 
-## Eclipse
+# Eclipse
 .settings/
 tmp/
 .metadata
@@ -73,30 +73,31 @@ local.properties
 .loadpath
 .factorypath
 
-## NetBeans
+# NetBeans
 nbproject/private/
 nbbuild/
 nbdist/
 nbactions.xml
 nb-configuration.xml
 
-## Visual Studio Code
+# Visual Studio Code
 .vscode/
 .code-workspace
 
-## OS X
+# OS X
 .DS_Store
 
-## Windows
+# Windows
 Thumbs.db
 
-## Miscellaneous
+# Miscellaneous
 *.log
 
-## Other
+# Other
 *.txt
 uploads/
 .env
+
 # Logs
 logs
 npm-debug.log*
@@ -104,12 +105,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-node_modules/
-dist/
-dist-ssr
-coverage
-*.local
 
 /cypress/videos/
 /cypress/screenshots/
@@ -125,7 +120,7 @@ coverage
 
 *.tsbuildinfo
 
-### STS ###
+# STS
 .apt_generated
 .settings
 .springBeans
@@ -140,6 +135,11 @@ dist
 .cache/
 package-lock.json
 public/env.js
+node_modules/
+dist/
+dist-ssr
+coverage
+*.local
 
 # Docker
 docker/data/

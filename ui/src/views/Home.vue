@@ -274,31 +274,31 @@ export default {
       showModal: false,
       susFiles: '',
       // Значения настроек
-      minFileLength: 0,
-      maxFileLengthDiffRate: 0.5,
+      minFileLength: 20,
+      maxFileLengthDiffRate: 0.2,
       lexicalAnalysisEnable: true,
       syntaxAnalysisEnable: true,
-      lexicalPlagiarismThreshold: 0.5,
-      syntaxPlagiarismThreshold: 0.5,
+      lexicalPlagiarismThreshold: 0.7,
+      syntaxPlagiarismThreshold: 0.7,
       saveSourcesIntoDatabase: false,
       profile: "custom",
       // Эталонные значения для профилей
       profilesSettings: {
         speed: {
-          minFileLength: 20,
+          minFileLength: 25,
           maxFileLengthDiffRate: 0.3,
           lexicalAnalysisEnable: true,
           syntaxAnalysisEnable: false,
-          lexicalPlagiarismThreshold: 0.5,
-          syntaxPlagiarismThreshold: 0.5,
+          lexicalPlagiarismThreshold: 0.65,
+          syntaxPlagiarismThreshold: 0.65,
         },
         quality: {
-          minFileLength: 5,
-          maxFileLengthDiffRate: 0.2,
+          minFileLength: 10,
+          maxFileLengthDiffRate: 0.4,
           lexicalAnalysisEnable: true,
           syntaxAnalysisEnable: true,
-          lexicalPlagiarismThreshold: 0.75,
-          syntaxPlagiarismThreshold: 0.75,
+          lexicalPlagiarismThreshold: 0.8,
+          syntaxPlagiarismThreshold: 0.8,
         }
       }
     }

@@ -11,12 +11,12 @@ import router from './router/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.bundle.js';
 
-const savedLanguage = localStorage.getItem('appLanguage') || 'en';
+const savedLanguage = localStorage.getItem('appLanguage') || 'ru';
 
 const i18n = createI18n({
     locale: savedLanguage,
     fallbackLocale: 'ru',
-    messages: { en, ru, zh }
+    messages: { ru, en, zh }
 });
 
 const app = createApp(App)
