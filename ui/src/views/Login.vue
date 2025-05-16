@@ -63,7 +63,6 @@ export default {
                 }
                 const data = await response.json();
                 authService.setTokens(data.accessToken, data.refreshToken, data.role, data.userId, data.username);
-                console.log(authService.getTokens())
                 this.$router.push('/home');
             } catch (error) {
                 this.errorMessage = this.$t("login.error_server");

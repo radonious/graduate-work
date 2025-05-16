@@ -397,8 +397,6 @@ export default {
         this.result = await response.json();
         this.susFiles = this.getSortedSuspiciousFiles(this.result)
 
-        console.log(this.result)
-
       } catch (error) {
         this.errorMessage = error.message
       } finally {
@@ -425,16 +423,16 @@ export default {
         return [...lexical, ...syntax];
       });
 
-      const mergedMap = list.reduce((map, entry) => {
+      const mergedMap = list.reduce((accumMap, entry) => {
         const key = `${entry.prefix}_${entry.filename}`;
-        if (map.has(key)) {
-          const existing = map.get(key);
-          existing.type =  this.$t("home.results.table.analysis_type.both");
+        if (accumMap.has(key)) {
+          const existing = accumMap.get(key);
+          existing.type = this.$t("home.results.table.analysis_type.both");
           existing.plagiarism = (existing.plagiarism + entry.plagiarism) / 2;
         } else {
-          map.set(key, { ...entry });
+          accumMap.set(key, entry);
         }
-        return map;
+        return accumMap;
       }, new Map());
 
       return Array.from(mergedMap.values()).sort((a, b) => {
