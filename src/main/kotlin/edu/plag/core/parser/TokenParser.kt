@@ -19,7 +19,9 @@ class TokenParser {
         tokenStream.fill() // Заполняем поток токенами
 
         return tokenStream.tokens
+            // Исключаем избыточные названия
             .filter { it.type !in listOf(JavaLexer.WS, JavaLexer.EOF) }
+            .filter { it.type !in listOf(JavaLexer.DOT, JavaLexer.SEMI, JavaLexer.COMMA) }
             .filter { it.type !in listOf(JavaLexer.LINE_COMMENT, JavaLexer.COMMENT) }
             .map { normalizeToken(it) }
     }
@@ -29,7 +31,7 @@ class TokenParser {
      */
     private fun normalizeToken(token: Token): String {
         return when (token.type) {
-            JavaLexer.IDENTIFIER -> "VAR"
+            // JavaLexer.IDENTIFIER -> "VAR" // Повышает общность текстов, но снижает качество проверки
             JavaLexer.DECIMAL_LITERAL, JavaLexer.HEX_LITERAL, JavaLexer.OCT_LITERAL, JavaLexer.BINARY_LITERAL,
             JavaLexer.FLOAT_LITERAL, JavaLexer.HEX_FLOAT_LITERAL -> "NUM_LITERAL"
             JavaLexer.STRING_LITERAL, JavaLexer.CHAR_LITERAL -> "STR_LITERAL"

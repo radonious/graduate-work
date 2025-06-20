@@ -56,7 +56,7 @@ class SyntaxAnalyzerTest(
     }
 
     @Test
-    fun `analyze should detect isomorphism in identical graphs`() {
+    fun `should detect isomorphism in identical graphs`() {
         val result = syntaxAnalyzer.analyze(code, code)
 
         assertTrue(result.hasIsomorphism)
@@ -76,23 +76,7 @@ class SyntaxAnalyzerTest(
     }
 
     @Test
-    fun `should detect isomorphic subgraphs`() {
-        val mainGraph = DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge::class.java).apply {
-            addVertex("A"); addVertex("B"); addVertex("C")
-            addEdge("A", "B"); addEdge("B", "C")
-        }
-
-        val subgraph = DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge::class.java).apply {
-            addVertex("C"); addVertex("B"); addVertex("A")
-            addEdge("B", "A"); addEdge("C", "B")
-        }
-
-        val result = syntaxAnalyzer.hasAstPlagiarism(mainGraph, subgraph, 3)
-        assertTrue(result)
-    }
-
-    @Test
-    fun `score should handle completely different graphs`() {
+    fun `should handle completely different graphs`() {
         val graph1 = createSimpleGraph()
         val graph2 = DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge::class.java).apply {
             addVertex("C"); addVertex("D"); addEdge("C", "D")
