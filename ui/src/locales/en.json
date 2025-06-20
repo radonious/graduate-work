@@ -106,7 +106,7 @@
         "analysis_type": {
           "lexical": "Lexical",
           "syntax": "Syntax",
-          "both": "Both"
+          "both": "Syn. & Lex."
         },
         "plagiarism": "Match"
       }
