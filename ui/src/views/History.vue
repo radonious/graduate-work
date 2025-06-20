@@ -25,8 +25,8 @@
           <td class="border px-4 py-2">{{ item.checkType }}</td>
           <td class="border px-4 py-2">{{ (item.plagiarism * 100).toFixed(1) }}%</td>
           <td class="border px-4 py-2">{{ (item.uniqueness * 100).toFixed(1) }}%</td>
-          <td class="border px-4 py-2">{{ item.lexicalEnabled ? 'Да' : 'Нет' }}</td>
-          <td class="border px-4 py-2">{{ item.syntaxEnabled ? 'Да' : 'Нет' }}</td>
+          <td class="border px-4 py-2">{{ item.lexicalEnabled ? $t("history.yes") : $t("history.no") }}</td>
+          <td class="border px-4 py-2">{{ item.syntaxEnabled ? $t("history.yes") : $t("history.no") }}</td>
         </tr>
         </tbody>
       </table>

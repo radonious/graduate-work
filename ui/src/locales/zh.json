@@ -120,7 +120,9 @@
     "plagiarism": "抄袭率",
     "uniqueness": "原创率",
     "lexical": "词汇分析",
-    "syntax": "语法分析"
+    "syntax": "语法分析",
+    "yes": "是的",
+    "no": "不"
   },
   "about": {
     "title": "关于项目",
